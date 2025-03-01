@@ -1,2 +1,2 @@
-# WoWCharacterViewerServer
-Web Server to provide files needed for WoWCharacterViewer 
+# WoWModelViewerServer
+Web Server to provide files needed for WoWModelViewer
