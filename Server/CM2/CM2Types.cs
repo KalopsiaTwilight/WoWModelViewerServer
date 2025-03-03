@@ -29,7 +29,6 @@
         public Float3 ExtentMax { get; set; }
         public short VariationNext { get; set; }
         public ushort AliasNext { get; set; }
-        public string AnimationName { get; set; } = string.Empty;
     }
 
     public class CM2Track<T>
