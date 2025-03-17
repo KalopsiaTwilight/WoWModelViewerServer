@@ -186,9 +186,9 @@ namespace Server.CM2
             _writer.Write(bone.SubMeshId);
             _writer.Write(bone.BoneNameCRC);
             Write(bone.Pivot);
-            WriteArray(bone.Translation, (x) => Write(x, Write));
-            WriteArray(bone.Rotation, (x) => Write(x, Write));
-            WriteArray(bone.Scale, (x) => Write(x, Write));
+            Write(bone.Translation, Write);
+            Write(bone.Rotation, Write);
+            Write(bone.Scale, Write);
         }
 
         internal void Write(CM2Submesh mesh)
@@ -237,9 +237,9 @@ namespace Server.CM2
 
         internal void Write(CM2TextureTransform transform)
         {
-            WriteArray(transform.Translation, (x) => Write(x, Write));
-            WriteArray(transform.Rotation, (x) => Write(x, Write));
-            WriteArray(transform.Scaling, (x) => Write(x, Write));
+            Write(transform.Translation, Write);
+            Write(transform.Rotation, Write);
+            Write(transform.Scaling, Write);
         }
 
         internal void Write(CM2Attachment modelAttachment)
@@ -251,13 +251,13 @@ namespace Server.CM2
 
         internal void Write(CM2Color color)
         {
-            WriteArray(color.Color, (x) => Write(x, Write));
-            WriteArray(color.Alpha, (x) => Write(x, _writer.Write));
+            Write(color.Color, Write);
+            Write(color.Alpha, _writer.Write);
         }
 
         internal void Write(CM2TextureWeight weight)
         {
-            WriteArray(weight.Weights, (x) => Write(x, _writer.Write));
+            Write(weight.Weights, _writer.Write);
         }
 
         internal void Write(CM2ParticleEmitter emitter)
@@ -304,18 +304,18 @@ namespace Server.CM2
             Write(emitter.MultiTextureParam0.Item2);
             Write(emitter.MultiTextureParam1.Item1);
             Write(emitter.MultiTextureParam1.Item2);
-            WriteArray(emitter.EmissionSpeed, (x) => Write(x, _writer.Write));
-            WriteArray(emitter.SpeedVariation, (x) => Write(x, _writer.Write));
-            WriteArray(emitter.VerticalRange, (x) => Write(x, _writer.Write));
-            WriteArray(emitter.HorizontalRange, (x) => Write(x, _writer.Write));
-            WriteArray(emitter.Gravity, (x) => Write(x, Write));
-            WriteArray(emitter.Lifespan, (x) => Write(x, _writer.Write));
-            WriteArray(emitter.EmissionAreaLength, (x) => Write(x, _writer.Write));
-            WriteArray(emitter.EmissionAreaWidth, (x) => Write(x, _writer.Write));
-            WriteArray(emitter.ZSource, (x) => Write(x, _writer.Write));
-            WriteArray(emitter.EmissionRate, (x) => Write(x, _writer.Write));
+            Write(emitter.EmissionSpeed, _writer.Write);
+            Write(emitter.SpeedVariation, _writer.Write);
+            Write(emitter.VerticalRange, _writer.Write);
+            Write(emitter.HorizontalRange, _writer.Write);
+            Write(emitter.Gravity, Write);
+            Write(emitter.Lifespan, _writer.Write);
+            Write(emitter.EmissionAreaLength, _writer.Write);
+            Write(emitter.EmissionAreaWidth, _writer.Write);
+            Write(emitter.ZSource, _writer.Write);
+            Write(emitter.EmissionRate, _writer.Write);
             WriteArray(emitter.SplinePoints, Write);
-            WriteArray(emitter.EnabledIn, (x) => Write(x, _writer.Write));
+            Write(emitter.EnabledIn, _writer.Write);
         }
 
         internal void Write(CM2ExtendedParticle particle)
@@ -337,14 +337,14 @@ namespace Server.CM2
             _writer.Write(emitter.TextureRows);
             _writer.Write(emitter.TextureCols);
             _writer.Write(emitter.PriorityPlane);
-            WriteArray(emitter.TexSlotTrack, (x) => Write(x, _writer.Write));
-            WriteArray(emitter.VisibilityTrack, (x) => Write(x, _writer.Write));
+            Write(emitter.TexSlotTrack, _writer.Write);
+            Write(emitter.VisibilityTrack, _writer.Write);
             WriteArray(emitter.TextureIndices, _writer.Write);
             WriteArray(emitter.MaterialIndices, _writer.Write);
-            WriteArray(emitter.ColorTrack, (x) => Write(x, Write));
-            WriteArray(emitter.AlphaTrack, (x) => Write(x, _writer.Write));
-            WriteArray(emitter.HeightAboveTrack, (x) => Write(x, _writer.Write));
-            WriteArray(emitter.HeightBelowTrack, (x) => Write(x, _writer.Write));
+            Write(emitter.ColorTrack, Write);
+            Write(emitter.AlphaTrack, _writer.Write);
+            Write(emitter.HeightAboveTrack, _writer.Write);
+            Write(emitter.HeightBelowTrack, _writer.Write);
         }
 
         #region Generic Writes
@@ -358,8 +358,13 @@ namespace Server.CM2
         {
             _writer.Write(track.InterpolationType);
             _writer.Write(track.GlobalSequence);
-            WriteArray(track.TimeStamps, _writer.Write);
-            WriteArray(track.Values, writeFn);
+            WriteArray(track.Animations, (x) => Write(x, writeFn));
+        }
+
+        private void Write<T>(CM2AnimatedValue<T> animTrack,  Action<T> writeFn)
+        {
+            WriteArray(animTrack.TimeStamps, _writer.Write);
+            WriteArray(animTrack.Values, writeFn);
         }
 
         private void Write((float, float) value)
@@ -442,12 +447,13 @@ namespace Server.CM2
             return 38 +
                 4 + emitter.TextureIndices.Length * 2 +
                 4 + emitter.MaterialIndices.Length * 2 +
-                4 + emitter.ColorTrack.Sum(x => GetOutputSize(x, 12)) +
-                4 + emitter.AlphaTrack.Sum(x => GetOutputSize(x, 2)) +
-                4 + emitter.HeightAboveTrack.Sum(x => GetOutputSize(x, 4)) +
-                4 + emitter.HeightBelowTrack.Sum(x => GetOutputSize(x, 4)) +
-                4 + emitter.TexSlotTrack.Sum(x => GetOutputSize(x, 2)) +
-                4 + emitter.VisibilityTrack.Sum(x => GetOutputSize(x, 2));
+
+                GetOutputSize(emitter.ColorTrack, 12) +
+                GetOutputSize(emitter.AlphaTrack, 2) +
+                GetOutputSize(emitter.HeightAboveTrack, 4) +
+                GetOutputSize(emitter.HeightBelowTrack, 4) +
+                GetOutputSize(emitter.TexSlotTrack, 2) +
+                GetOutputSize(emitter.VisibilityTrack, 2);
         }
 
         private static int GetOutputSize(CM2ExtendedParticle particle)
@@ -458,23 +464,23 @@ namespace Server.CM2
         private static int GetOutputSize(CM2ParticleEmitter emitter)
         {
             return 190 +
-                4 + emitter.EmissionSpeed.Sum(x => GetOutputSize(x, 4)) +
-                4 + emitter.SpeedVariation.Sum(x => GetOutputSize(x, 4)) +
-                4 + emitter.VerticalRange.Sum(x => GetOutputSize(x, 4)) +
-                4 + emitter.HorizontalRange.Sum(x => GetOutputSize(x, 4)) +
-                4 + emitter.Gravity.Sum(x => GetOutputSize(x, 12)) +
-                4 + emitter.Lifespan.Sum(x => GetOutputSize(x, 4)) +
-                4 + emitter.EmissionRate.Sum(x => GetOutputSize(x, 4)) +
-                4 + emitter.EmissionAreaLength.Sum(x => GetOutputSize(x, 4)) +
-                4 + emitter.EmissionAreaWidth.Sum(x => GetOutputSize(x, 4)) +
-                4 + emitter.ZSource.Sum(x => GetOutputSize(x, 4)) +
+                GetOutputSize(emitter.EmissionSpeed, 4) +
+                GetOutputSize(emitter.SpeedVariation, 4) +
+                GetOutputSize(emitter.VerticalRange, 4) +
+                GetOutputSize(emitter.HorizontalRange, 4) +
+                GetOutputSize(emitter.Gravity, 12) +
+                GetOutputSize(emitter.Lifespan, 4) +
+                GetOutputSize(emitter.EmissionRate, 4) +
+                GetOutputSize(emitter.EmissionAreaLength, 4) +
+                GetOutputSize(emitter.EmissionAreaWidth, 4) +
+                GetOutputSize(emitter.ZSource, 4) +
                 GetOutputSize(emitter.ColorTrack, 12) +
                 GetOutputSize(emitter.AlphaTrack, 2) +
                 GetOutputSize(emitter.ScaleTrack, 8) +
                 GetOutputSize(emitter.HeadCellTrack, 2) +
                 GetOutputSize(emitter.TailCellTrack, 2) +
                 4 + emitter.SplinePoints.Length * 12 +
-                4 + emitter.EnabledIn.Sum(x => GetOutputSize(x, 1));
+                GetOutputSize(emitter.EnabledIn, 1);
         }
 
         private static int GetOutputSize<T>(CM2LocalTrack<T> track, int sizeOfT)
@@ -485,13 +491,12 @@ namespace Server.CM2
 
         private static int GetOutputSize(CM2TextureWeight weight)
         {
-            return 4 + weight.Weights.Sum(x => GetOutputSize(x, 2));
+            return GetOutputSize(weight.Weights, 2);
         }
 
         private static int GetOutputSize(CM2Color color)
         {
-            return 4 + color.Color.Sum(x => GetOutputSize(x, 12)) +
-                4 + color.Alpha.Sum(x => GetOutputSize(x, 2));
+            return GetOutputSize(color.Color, 12) + GetOutputSize(color.Alpha, 2);
         }
 
         private static int GetOutputSize(CM2Attachment attachment)
@@ -502,9 +507,9 @@ namespace Server.CM2
         private static int GetOutputSize(CM2TextureTransform transform)
         {
             return
-                4 + transform.Translation.Sum(x => GetOutputSize(x, 12)) +
-                4 + transform.Rotation.Sum(x => GetOutputSize(x, 16)) +
-                4 + transform.Scaling.Sum(x => GetOutputSize(x, 12));
+                GetOutputSize(transform.Translation, 12) +
+                GetOutputSize(transform.Rotation, 16) +
+                GetOutputSize(transform.Scaling, 12);
         }
 
         private static int GetOutputSize(CM2Texture texture)
@@ -530,14 +535,14 @@ namespace Server.CM2
         private static int GetOutputSize(CM2Bone bone)
         {
             return 28 +
-                4 + bone.Translation.Sum(x => GetOutputSize(x, 12)) +
-                4 + bone.Rotation.Sum(x => GetOutputSize(x, 16)) +
-                4 + bone.Scale.Sum(x => GetOutputSize(x, 12));
+                GetOutputSize(bone.Translation, 12) +
+                GetOutputSize(bone.Rotation, 16) +
+                GetOutputSize(bone.Scale, 12);
         }
 
         private static int GetOutputSize<T>(CM2Track<T> track, int sizeOfT)
         {
-            return 4 + 4 + track.TimeStamps.Length * 4 + 4 + track.Values.Length * sizeOfT;
+            return 4 + 4 + track.Animations.Sum((anim) => 4 + anim.TimeStamps.Length * 4 + 4 + anim.Values.Length * sizeOfT);
         }
 
         private static int GetOutputSize(CM2Vertex vertex)

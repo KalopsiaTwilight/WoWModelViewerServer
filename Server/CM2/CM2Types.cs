@@ -31,12 +31,17 @@
         public ushort AliasNext { get; set; }
     }
 
+    public class CM2AnimatedValue<T>
+    {
+        public int[] TimeStamps { get; set; } = [];
+        public T[] Values { get; set; } = [];
+    }
+
     public class CM2Track<T>
     {
         public short InterpolationType { get; set; }
         public short GlobalSequence { get; set; }
-        public int[] TimeStamps { get; set; } = [];
-        public T[] Values { get; set; } = [];
+        public CM2AnimatedValue<T>[] Animations { get; set; } = [];
     }
 
     public class CM2Bone
@@ -47,9 +52,9 @@
         public short SubMeshId { get; set; }
         public uint BoneNameCRC { get; set; }
         public Float3 Pivot { get; set; }
-        public CM2Track<Float3>[] Translation { get; set; } = [];
-        public CM2Track<Float4>[] Rotation { get; set; } = [];
-        public CM2Track<Float3>[] Scale { get; set; } = [];
+        public CM2Track<Float3> Translation { get; set; } = new();
+        public CM2Track<Float4> Rotation { get; set; } = new();
+        public CM2Track<Float3> Scale { get; set; } = new();
     }
 
     public class CM2Submesh
@@ -99,9 +104,9 @@
 
     public class CM2TextureTransform
     {
-        public CM2Track<Float3>[] Translation { get; set; } = [];
-        public CM2Track<Float4>[] Rotation { get; set; } = [];
-        public CM2Track<Float3>[] Scaling { get; set; } = [];
+        public CM2Track<Float3> Translation { get; set; } = new();
+        public CM2Track<Float4> Rotation { get; set; } = new();
+        public CM2Track<Float3> Scaling { get; set; } = new();
     }
 
     public class CM2Attachment
@@ -113,13 +118,13 @@
 
     public class CM2Color
     {
-        public CM2Track<Float3>[] Color { get; set; } = [];
-        public CM2Track<ushort>[] Alpha { get; set; } = [];
+        public CM2Track<Float3> Color { get; set; } = new();
+        public CM2Track<ushort> Alpha { get; set; } = new();
     }
 
     public class CM2TextureWeight
     {
-        public CM2Track<ushort>[] Weights { get; set; } = [];
+        public CM2Track<ushort> Weights { get; set; } = new();
     }
 
     public class CM2LocalTrack<T>
@@ -141,18 +146,18 @@
         public ushort TextureTileRotation { get; set; }
         public ushort TextureDimensionsRows { get; set; }
         public ushort TextureDimensionsColumns { get; set; }
-        public CM2Track<float>[] EmissionSpeed { get; set; } = [];
-        public CM2Track<float>[] SpeedVariation { get; set; } = [];
-        public CM2Track<float>[] VerticalRange { get; set; } = [];
-        public CM2Track<float>[] HorizontalRange { get; set; } = [];
-        public CM2Track<Float3>[] Gravity { get; set; } = [];
-        public CM2Track<float>[] Lifespan { get; set; } = [];
+        public CM2Track<float> EmissionSpeed { get; set; } = new();
+        public CM2Track<float> SpeedVariation { get; set; } = new();
+        public CM2Track<float> VerticalRange { get; set; } = new();
+        public CM2Track<float> HorizontalRange { get; set; } = new();
+        public CM2Track<Float3> Gravity { get; set; } = new();
+        public CM2Track<float> Lifespan { get; set; } = new();
         public float LifespanVary { get; set; }
-        public CM2Track<float>[] EmissionRate { get; set; } = [];
+        public CM2Track<float> EmissionRate { get; set; } = new();
         public float EmissionRateVary { get; set; }
-        public CM2Track<float>[] EmissionAreaLength { get; set; } = [];
-        public CM2Track<float>[] EmissionAreaWidth { get; set; } = [];
-        public CM2Track<float>[] ZSource { get; set; } = [];
+        public CM2Track<float> EmissionAreaLength { get; set; } = new();
+        public CM2Track<float> EmissionAreaWidth { get; set; } = new();
+        public CM2Track<float> ZSource { get; set; } = new();
         public CM2LocalTrack<Float3> ColorTrack { get; set; } = new();
         public CM2LocalTrack<ushort> AlphaTrack { get; set; } = new();
         public CM2LocalTrack<Float2> ScaleTrack { get; set; } = new();
@@ -178,7 +183,7 @@
         public float FollowSpeed2 { get; set; }
         public float FollowScale2 { get; set; }
         public Float3[] SplinePoints { get; set; } = [];
-        public CM2Track<byte>[] EnabledIn { get; set; } = [];
+        public CM2Track<byte> EnabledIn { get; set; } = new();
         public Float2 MultiTextureParamX { get; set; }
         public (Float2, Float2) MultiTextureParam0 { get; set; }
         public (Float2, Float2) MultiTextureParam1 { get; set; }
@@ -199,17 +204,17 @@
         public Float3 Position { get; set; }
         public short[] TextureIndices { get; set; } = [];
         public short[] MaterialIndices { get; set; } = [];
-        public CM2Track<Float3>[] ColorTrack { get; set; } = [];
-        public CM2Track<ushort>[] AlphaTrack { get; set; } = [];
-        public CM2Track<float>[] HeightAboveTrack { get; set; } = [];
-        public CM2Track<float>[] HeightBelowTrack { get; set; } = [];
+        public CM2Track<Float3> ColorTrack { get; set; } = new();
+        public CM2Track<ushort> AlphaTrack { get; set; } = new();
+        public CM2Track<float> HeightAboveTrack { get; set; } = new();
+        public CM2Track<float> HeightBelowTrack { get; set; } = new();
         public float EdgesPerSecond { get; set; }
         public float EdgeLifetime { get; set; }
         public float Gravity { get; set; }
         public short TextureRows { get; set; }
         public short TextureCols { get; set; }
-        public CM2Track<ushort>[] TexSlotTrack { get; set; } = [];
-        public CM2Track<byte>[] VisibilityTrack { get; set; } = [];
+        public CM2Track<ushort> TexSlotTrack { get; set; } = new();
+        public CM2Track<byte> VisibilityTrack { get; set; } = new();
         public short PriorityPlane { get; set; }
     }
 }

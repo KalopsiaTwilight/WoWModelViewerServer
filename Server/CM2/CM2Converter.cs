@@ -290,25 +290,23 @@ namespace Server.CM2
                 PriorityPlane = ribbon.PriorityPlane
             };
         }
-        public static CM2Track<X>[] Convert<X>(M2Track<X> track)
+        public static CM2Track<X> Convert<X>(M2Track<X> track)
         {
             return Convert(track, (x) => x);
         }
 
-        public static CM2Track<Y>[] Convert<X, Y>(M2Track<X> track, Func<X, Y> convertFn)
+        public static CM2Track<Y> Convert<X, Y>(M2Track<X> track, Func<X, Y> convertFn)
         {
-            return track.TimeStamps.Select((x, i) =>
+            return new CM2Track<Y>()
             {
-                var result = new CM2Track<Y>()
+                InterpolationType = track.InterpolationType,
+                GlobalSequence = track.GlobalSequence,
+                Animations = track.TimeStamps.Select((x, i) => new CM2AnimatedValue<Y>
                 {
-                    InterpolationType = track.InterpolationType,
-                    GlobalSequence = track.GlobalSequence,
-                    TimeStamps = x
-                };
-                var values = track.Values[i];
-                result.Values = values.Select(convertFn).ToArray();
-                return result;
-            }).ToArray();
+                    TimeStamps = x,
+                    Values = track.Values[i].Select(convertFn).ToArray(),
+                }).ToArray()
+            };
         }
 
         public static CM2LocalTrack<Y> Convert<X, Y>(M2LocalTrack<X> track, Func<X, Y> convertFn)
