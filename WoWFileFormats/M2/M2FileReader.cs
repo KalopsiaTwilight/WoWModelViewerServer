@@ -15,7 +15,7 @@
                 FileDataID = _fileDataId
             };
 
-            _offSet = 0;
+            _chunkOffSet = 0;
 
             while (_stream.Position < _stream.Length)
             {

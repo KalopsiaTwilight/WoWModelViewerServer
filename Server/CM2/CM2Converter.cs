@@ -1,13 +1,8 @@
-﻿using WoWFileFormats.Common;
-using WoWFileFormats.M2;
+﻿using WoWFileFormats.M2;
 
 namespace Server.CM2
 {
-    using Float2 = (float X, float Y);
-    using Float3 = (float X, float Y, float Z);
-    using Float4 = (float X, float Y, float Z, float W);
-
-    public static class CM2Converter
+    public class CM2Converter: BaseCompressedConverter
     {
         public static CM2File Convert(M2File file)
         {
@@ -290,6 +285,7 @@ namespace Server.CM2
                 PriorityPlane = ribbon.PriorityPlane
             };
         }
+
         public static CM2Track<X> Convert<X>(M2Track<X> track)
         {
             return Convert(track, (x) => x);
@@ -324,46 +320,6 @@ namespace Server.CM2
                 Keys = track.Keys,
                 Values = track.Values,
             };
-        }
-
-        public static Float2 Convert(CRange range)
-        {
-            return (range.Min, range.Max);
-        }
-
-        public static Float2 Convert(C2Vector vector)
-        {
-            return (vector.X, vector.Y);
-        }
-
-        public static Float3 Convert(C3Vector vector)
-        {
-            return (vector.X, vector.Y, vector.Z);
-        }
-
-        public static Float4 Convert(C4Vector vector)
-        {
-            return (vector.X, vector.Y, vector.Z, vector.W);
-        }
-
-        public static Float4 Convert(Quat32 quat)
-        {
-            return (quat.X, quat.Y, quat.Z, quat.W);
-        }
-
-        public static Float4 Convert(Quat16 quat)
-        {
-            return Convert(quat.ToQuat32());
-        }
-
-        public static float[] Convert(C44Matrix matrix)
-        {
-            return [
-                matrix.Col1.X, matrix.Col1.Y, matrix.Col1.Z, matrix.Col1.W,
-                matrix.Col2.X, matrix.Col2.Y, matrix.Col2.Z, matrix.Col2.W,
-                matrix.Col3.X, matrix.Col3.Y, matrix.Col3.Z, matrix.Col3.W,
-                matrix.Col4.X, matrix.Col4.Y, matrix.Col4.Z, matrix.Col4.W,
-            ];
         }
     }
 }

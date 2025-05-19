@@ -6,6 +6,7 @@ using Server.Infrastructure;
 using SixLabors.ImageSharp;
 using WoWFileFormats.Interfaces;
 using WoWFileFormats.M2;
+using WoWFileFormats.WMO;
 
 namespace Server.Controllers
 {
@@ -142,6 +143,32 @@ namespace Server.Controllers
             var cm2Writer = new CM2Writer(Response.Body);
             Response.Headers.ContentType = "application/octet-stream";
             cm2Writer.Write(cm2File);
+            await Response.CompleteAsync();
+        }
+
+
+        [HttpGet]
+        [AllowSynchronousIO]
+        [Route("/modelviewer/models/{fileId}.cwmo")]
+        public async Task GetCWMOFile(uint fileId)
+        {
+            if (!_fileDataProvider.FileIdExists(fileId))
+            {
+                Response.StatusCode = 404;
+                await Response.CompleteAsync();
+                return;
+            }
+            var fileData = _fileDataProvider.GetFileById(fileId);
+
+            using var wmoReader = new WMOFileReader(fileId, fileData);
+
+            var wmoFile = wmoReader.ReadWMORootFile();
+            wmoFile.LoadGroupFiles(_fileDataProvider);
+            var cwmoFile = CWMOConverter.Convert(wmoFile);
+
+            var cwmoWriter = new CWMOWriter(Response.Body);
+            Response.Headers.ContentType = "application/octet-stream";
+            cwmoWriter.Write(cwmoFile);
             await Response.CompleteAsync();
         }
     }

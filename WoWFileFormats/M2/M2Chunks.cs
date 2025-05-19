@@ -2,15 +2,6 @@
 
 namespace WoWFileFormats.M2
 {
-    internal class M2Chunks
-    {
-    }
-
-    public interface M2Chunk
-    {
-        public uint ChunkId { get; }
-    }
-
     [Flags]
     public enum MD21ChunkFlags
     {
@@ -39,7 +30,7 @@ namespace WoWFileFormats.M2
         AnimDataIsChunked = 0x200000,
     }
 
-    public class MD21Chunk : M2Chunk
+    public class MD21Chunk : IWowDataChunk
     {
         public const uint ID = 0x3132444D;
 
@@ -85,14 +76,14 @@ namespace WoWFileFormats.M2
     }
 
 
-    public class PFIDChunk : M2Chunk
+    public class PFIDChunk : IWowDataChunk
     {
         public const uint ID = 0x44494650;
         public uint ChunkId => ID;
         public uint PhysFileId { get; set; }
     }
 
-    public class SFIDChunk : M2Chunk
+    public class SFIDChunk : IWowDataChunk
     {
         public const uint ID = 0x44494653;
         public uint ChunkId => ID;
@@ -107,7 +98,7 @@ namespace WoWFileFormats.M2
         public uint FileId { get; set; }
     }
 
-    public class AFIDChunk : M2Chunk
+    public class AFIDChunk : IWowDataChunk
     {
         public const uint ID = 0x44494641;
 
@@ -116,7 +107,7 @@ namespace WoWFileFormats.M2
         public AnimationFileEntry[] Entries { get; set; } = [];
     }
 
-    public class BFIDChunk : M2Chunk
+    public class BFIDChunk : IWowDataChunk
     {
         public const uint ID = 0x44494642;
 
@@ -125,7 +116,7 @@ namespace WoWFileFormats.M2
         public uint[] FileDataIds { get; set; } = [];
     }
 
-    public class TXACChunk : M2Chunk
+    public class TXACChunk : IWowDataChunk
     {
         public const uint ID = 0x43415854;
 
@@ -150,7 +141,7 @@ namespace WoWFileFormats.M2
             };
         }
     }
-    public class EXPTChunk : M2Chunk
+    public class EXPTChunk : IWowDataChunk
     {
         public const uint ID = 0x54505845;
 
@@ -158,7 +149,7 @@ namespace WoWFileFormats.M2
         public EXPTChunkEntry[] Entries { get; set; } = [];
 
     }
-    public class EXP2Chunk : M2Chunk
+    public class EXP2Chunk : IWowDataChunk
     {
         public const uint ID = 0x32505845;
 
@@ -167,7 +158,7 @@ namespace WoWFileFormats.M2
         public M2ExtendedParticle[] Particles { get; set; } = [];
     }
 
-    public class PABCChunk : M2Chunk
+    public class PABCChunk : IWowDataChunk
     {
         public const uint ID = 0x43424150;
 
@@ -176,7 +167,7 @@ namespace WoWFileFormats.M2
         public ushort[] ReplacementParentSequenceLookups { get; set; } = [];
     }
 
-    public class PADCChunk : M2Chunk
+    public class PADCChunk : IWowDataChunk
     {
         public const uint ID = 0x43444150;
 
@@ -185,7 +176,7 @@ namespace WoWFileFormats.M2
         public M2TextureWeight[] TextureWeights { get; set; } = [];
     }
 
-    public class PSBCChunk : M2Chunk
+    public class PSBCChunk : IWowDataChunk
     {
         public const uint ID = 0x43425350;
 
@@ -194,7 +185,7 @@ namespace WoWFileFormats.M2
         public M2Bounds[] ParentSequenceBounds { get; set; } = [];
     }
 
-    public class PEDCChunk : M2Chunk
+    public class PEDCChunk : IWowDataChunk
     {
         public const uint ID = 0x43444550;
 
@@ -203,7 +194,7 @@ namespace WoWFileFormats.M2
         public M2TrackBase[] ParentEventData { get; set; } = [];
     }
 
-    public class SKIDChunk : M2Chunk
+    public class SKIDChunk : IWowDataChunk
     {
         public const uint ID = 0x44494B53;
 
@@ -212,7 +203,7 @@ namespace WoWFileFormats.M2
         public uint FileDataId { get; set; }
     }
 
-    public class TXIDChunk : M2Chunk
+    public class TXIDChunk : IWowDataChunk
     {
         public const uint ID = 0x44495854;
 
@@ -221,7 +212,7 @@ namespace WoWFileFormats.M2
         public uint[] FileDataIds { get; set; } = [];
     }
 
-    public class LDV1Chunk : M2Chunk
+    public class LDV1Chunk : IWowDataChunk
     {
         public const uint ID = 0x3156444C;
 
@@ -233,7 +224,7 @@ namespace WoWFileFormats.M2
         public uint Unk4 { get; set; }
     }
 
-    public class RPIDChunk : M2Chunk
+    public class RPIDChunk : IWowDataChunk
     {
         public const uint ID = 0x44495052;
 
@@ -242,7 +233,7 @@ namespace WoWFileFormats.M2
         public uint[] FileDataIds { get; set; } = [];
     }
 
-    public class GPIDChunk : M2Chunk
+    public class GPIDChunk : IWowDataChunk
     {
         public const uint ID = 0x44495047;
 
@@ -252,7 +243,7 @@ namespace WoWFileFormats.M2
     }
 
     /* Structure unknown */
-    public class WFV1Chunk : M2Chunk
+    public class WFV1Chunk : IWowDataChunk
     {
         public const uint ID = 0x31564657;
 
@@ -260,14 +251,14 @@ namespace WoWFileFormats.M2
     }
 
     /* Structure unknown */
-    public class WFV2Chunk : M2Chunk
+    public class WFV2Chunk : IWowDataChunk
     {
         public const uint ID = 0x32564657;
 
         public uint ChunkId => ID;
     }
 
-    public class PGD1Chunk : M2Chunk
+    public class PGD1Chunk : IWowDataChunk
     {
         public const uint ID = 0x31444750;
 
@@ -275,7 +266,7 @@ namespace WoWFileFormats.M2
         public short[] Geosets { get; set; } = [];
     }
 
-    public class WFV3Chunk : M2Chunk
+    public class WFV3Chunk : IWowDataChunk
     {
         public const uint ID = 0x33564657;
         public uint ChunkId => ID;
@@ -303,7 +294,7 @@ namespace WoWFileFormats.M2
     }
 
     /* Inline physics, let's hope we can ignore this */
-    public class PFDCChunk : M2Chunk
+    public class PFDCChunk : IWowDataChunk
     {
         public const uint ID = 0x43444650;
 
@@ -316,7 +307,7 @@ namespace WoWFileFormats.M2
         public float Unk1 { get; set; }
         public float Unk2 { get; set; }
     }
-    public class EDGFChunk : M2Chunk
+    public class EDGFChunk : IWowDataChunk
     {
         public const uint ID = 0x46474445;
 
@@ -324,7 +315,7 @@ namespace WoWFileFormats.M2
         public EDGFChunkEntry[] Entries { get; set; } = [];
     }
 
-    public class NERFChunk : M2Chunk
+    public class NERFChunk : IWowDataChunk
     {
         public const uint ID = 0x4652454E;
 
@@ -340,7 +331,7 @@ namespace WoWFileFormats.M2
         public ushort Unk0 { get; set; }
         public ushort Unk1 { get; set; }
     }
-    public class DETLChunk : M2Chunk
+    public class DETLChunk : IWowDataChunk
     {
         public const uint ID = 0x4C544544;
 
@@ -348,7 +339,7 @@ namespace WoWFileFormats.M2
         public DETLChunkEntry[] Entries { get; set; } = [];
     }
 
-    public class DBOCChunk : M2Chunk
+    public class DBOCChunk : IWowDataChunk
     {
         public const uint ID = 0x434F4244;
 
@@ -363,7 +354,7 @@ namespace WoWFileFormats.M2
         public uint Unk1_8 { get; set; }
     }
 
-    public class SKL1Chunk : M2Chunk
+    public class SKL1Chunk : IWowDataChunk
     {
         public const uint ID = 0x314C4B53;
 
@@ -374,7 +365,7 @@ namespace WoWFileFormats.M2
         public byte[] UnkArray1 { get; set; } = [];
     }
 
-    public class SKA1Chunk : M2Chunk
+    public class SKA1Chunk : IWowDataChunk
     {
         public const uint ID = 0x31414B53;
 
@@ -383,7 +374,7 @@ namespace WoWFileFormats.M2
         public short[] AttachmentLookup { get; set; } = [];
     }
 
-    public class SKB1Chunk : M2Chunk
+    public class SKB1Chunk : IWowDataChunk
     {
         public const uint ID = 0x31424B53;
 
@@ -392,7 +383,7 @@ namespace WoWFileFormats.M2
         public short[] KeyBoneLookup { get; set; } = [];
     }
 
-    public class SKS1Chunk : M2Chunk
+    public class SKS1Chunk : IWowDataChunk
     {
         public const uint ID = 0x31534B53;
 
@@ -403,7 +394,7 @@ namespace WoWFileFormats.M2
         public byte[] UnkArray2 { get; set; } = [];
     }
 
-    public class SKPDChunk : M2Chunk
+    public class SKPDChunk : IWowDataChunk
     {
         public const uint ID = 0x44504B53;
 
@@ -413,7 +404,7 @@ namespace WoWFileFormats.M2
         public byte[] UnkArray4 { get; set; } = [];
     }
 
-    public class BIDAChunk : M2Chunk
+    public class BIDAChunk : IWowDataChunk
     {
         public const uint ID = 0x41444942;
 
@@ -421,7 +412,7 @@ namespace WoWFileFormats.M2
         public ushort[] BoneIds { get; set; } = [];
     }
 
-    public class BOMTChunk : M2Chunk
+    public class BOMTChunk : IWowDataChunk
     {
         public const uint ID = 0x544D4F42;
 

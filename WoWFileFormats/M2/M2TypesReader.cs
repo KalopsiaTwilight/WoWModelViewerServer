@@ -5,7 +5,7 @@ namespace WoWFileFormats.M2
 {
     public abstract class M2TypesReader : BaseWoWReader
     {
-        internal long _offSet;
+        internal long _chunkOffSet;
         internal long chunkSize;
         internal M2Sequence[] _sequences = [];
         internal ushort[] _sequenceLookup = [];
@@ -462,7 +462,7 @@ namespace WoWFileFormats.M2
             T[] result = new T[arrayLength];
 
             var currentOffset = _stream.Position;
-            _stream.Position = _offSet + arrayOffset;
+            _stream.Position = _chunkOffSet + arrayOffset;
             for (var i = 0; i < arrayLength; i++)
             {
                 result[i] = deserializeFn();
@@ -479,7 +479,7 @@ namespace WoWFileFormats.M2
             T[] result = new T[arrayLength];
 
             var currentOffset = _stream.Position;
-            _stream.Position = _offSet + arrayOffset;
+            _stream.Position = _chunkOffSet + arrayOffset;
             for (var i = 0; i < arrayLength; i++)
             {
                 result[i] = deserializeFn(i);
@@ -494,7 +494,7 @@ namespace WoWFileFormats.M2
             var stringOffset = _reader.ReadUInt32();
 
             var currentOffset = _stream.Position;
-            _stream.Position = _offSet + stringOffset;
+            _stream.Position = _chunkOffSet + stringOffset;
             var result = Encoding.UTF8.GetString(_reader.ReadBytes(checked((int)stringLength)));
             _stream.Position = currentOffset;
             return result;

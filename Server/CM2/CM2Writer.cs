@@ -2,15 +2,10 @@
 
 namespace Server.CM2
 {
-    public class CM2Writer
+    public class CM2Writer: BaseCompressedWriter
     {
-        protected readonly Stream _stream;
-        protected BinaryWriter _writer;
-
-        public CM2Writer(Stream stream)
+        public CM2Writer(Stream stream): base(stream)
         {
-            _stream = stream;
-            _writer = new BinaryWriter(stream);
         }
 
         public void Write(CM2BoneFile boneFile)
@@ -365,36 +360,6 @@ namespace Server.CM2
         {
             WriteArray(animTrack.TimeStamps, _writer.Write);
             WriteArray(animTrack.Values, writeFn);
-        }
-
-        private void Write((float, float) value)
-        {
-            _writer.Write(value.Item1);
-            _writer.Write(value.Item2);
-        }
-
-        private void Write((float, float, float) value)
-        {
-            _writer.Write(value.Item1);
-            _writer.Write(value.Item2);
-            _writer.Write(value.Item3);
-        }
-
-        private void Write((float, float, float, float) value)
-        {
-            _writer.Write(value.Item1);
-            _writer.Write(value.Item2);
-            _writer.Write(value.Item3);
-            _writer.Write(value.Item4);
-        }
-
-        private void WriteArray<T>(T[] value, Action<T> writeFn)
-        {
-            _writer.Write(value.Length);
-            foreach (var elem in value)
-            {
-                writeFn(elem);
-            }
         }
         #endregion
 

@@ -48,8 +48,7 @@ namespace WoWFileFormats.M2
 
         internal SKS1Chunk ReadSKS1Chunk()
         {
-            var curOffset = _offSet;
-            _offSet = _stream.Position;
+            _chunkOffSet = _stream.Position;
             var result = new SKS1Chunk()
             {
                 GlobalLoops = ReadM2Array(ReadM2Loop),
@@ -57,47 +56,40 @@ namespace WoWFileFormats.M2
                 SequenceLookup = ReadM2Array(_reader.ReadUInt16),
                 UnkArray2 = _reader.ReadBytes(8)
             };
-            _offSet = curOffset;
             return result;
         }
 
         internal SKB1Chunk ReadSKB1Chunk()
         {
-            var curOffset = _offSet;
-            _offSet = _stream.Position;
+            _chunkOffSet = _stream.Position;
             var result = new SKB1Chunk()
             {
                 Bones = ReadM2Array(ReadM2Bone),
                 KeyBoneLookup = ReadM2Array(_reader.ReadInt16)
             };
-            _offSet = curOffset;
             return result;
         }
 
         internal SKA1Chunk ReadSKA1Chunk()
         {
-            var curOffset = _offSet;
-            _offSet = _stream.Position;
+            _chunkOffSet = _stream.Position;
             var result = new SKA1Chunk()
             {
                 Attachments = ReadM2Array(ReadM2Attachment),
                 AttachmentLookup = ReadM2Array(_reader.ReadInt16)
             };
-            _offSet = curOffset;
             return result;
         }
 
         internal SKL1Chunk ReadSKL1Chunk()
         {
-            var curOffset = _offSet;
-            _offSet = _stream.Position;
+            _chunkOffSet = _stream.Position;
             var chunk = new SKL1Chunk()
             {
                 Flags = _reader.ReadUInt32(),
                 Name = ReadM2String(),
                 UnkArray1 = _reader.ReadBytes(4)
             };
-            _offSet = curOffset;
             return chunk;
         }
 
@@ -200,13 +192,11 @@ namespace WoWFileFormats.M2
 
         internal PGD1Chunk ReadPGD1Chunk()
         {
-            var originalOffset = _offSet;
-            _offSet = _stream.Position;
+            _chunkOffSet = _stream.Position;
             var result = new PGD1Chunk()
             {
                 Geosets = ReadM2Array(_reader.ReadInt16)
             };
-            _offSet = originalOffset;
             return result;
         }
 
@@ -268,25 +258,21 @@ namespace WoWFileFormats.M2
 
         internal PEDCChunk ReadPEDCChunk()
         {
-            var originalOffset = _offSet;
-            _offSet = _stream.Position;
+            _chunkOffSet = _stream.Position;
             var result = new PEDCChunk()
             {
                 ParentEventData = ReadM2Array(ReadM2TrackBase)
             };
-            _offSet = originalOffset;
             return result;
         }
 
         internal PSBCChunk ReadPSBCChunk()
         {
-            var originalOffset = _offSet;
-            _offSet = _stream.Position;
+            _chunkOffSet = _stream.Position;
             var result = new PSBCChunk()
             {
                 ParentSequenceBounds = ReadM2Array(ReadM2Bounds)
             };
-            _offSet = originalOffset;
             return result;
         }
 
@@ -319,13 +305,11 @@ namespace WoWFileFormats.M2
 
         internal EXP2Chunk ReadEXP2Chunk()
         {
-            var originalOffset = _offSet;
-            _offSet = _stream.Position;
+            _chunkOffSet = _stream.Position;
             var result = new EXP2Chunk()
             {
                 Particles = ReadM2Array(ReadM2Particle)
             };
-            _offSet = originalOffset;
             return result;
         }
 
@@ -430,7 +414,7 @@ namespace WoWFileFormats.M2
         internal MD21Chunk ReadMD21Chunk()
         {
             var result = new MD21Chunk();
-            _offSet = _stream.Position;
+            _chunkOffSet = _stream.Position;
             var magic = _reader.ReadUInt32();
             if (magic != 0x3032444D)
             {

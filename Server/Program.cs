@@ -1,5 +1,6 @@
 using CharacterViewer.Core.Providers;
 using DBCD.Providers;
+using Microsoft.AspNetCore.Cors.Infrastructure;
 using ModelViewer.Core.Components;
 using ModelViewer.Core.Providers;
 using WoWFileFormats.Interfaces;
@@ -40,6 +41,17 @@ namespace Server
                 builder.Services.AddTransient(component);
             }
 
+            if (builder.Environment.IsDevelopment())
+            {
+                builder.Services.AddCors((opt) =>
+                {
+                    opt.AddDefaultPolicy((builder) =>
+                    {
+                        builder.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin();
+                    });
+                });
+            }
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -47,9 +59,12 @@ namespace Server
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
+                app.UseCors();
+            } else
+            {
+                app.UseHttpsRedirection();
             }
 
-            //app.UseHttpsRedirection();
 
             app.UseAuthorization();
 

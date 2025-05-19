@@ -293,4 +293,9 @@ namespace WoWFileFormats.Common
             return Raw / (float)0x7fff;
         }
     }
+
+    public interface IWowDataChunk
+    {
+        public uint ChunkId { get; }
+    }
 }
