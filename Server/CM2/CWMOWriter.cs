@@ -52,6 +52,25 @@ namespace Server.CM2
             WriteArray(file.PortalVertices, Write);
             var groupsPos = (uint)memory.Position;
             WriteArray(file.Groups, Write);
+            var dataEndPos = (uint)memory.Position;
+
+            _writer = new BinaryWriter(_stream);
+            _writer.Write((uint)0x43574D4F);
+            _writer.Write(file.Version);
+            _writer.Write(startPos);
+            _writer.Write(materialsPos);
+            _writer.Write(doodadDefPos);
+            _writer.Write(doodadIdsPos);
+            _writer.Write(fogsPos);
+            _writer.Write(doodadSetsPos);
+            _writer.Write(portalRefsPos);
+            _writer.Write(portalPos);
+            _writer.Write(globalAmbientVolumePos);
+            _writer.Write(ambientVolumesPos);
+            _writer.Write(portalVerticesPos);
+            _writer.Write(groupsPos);
+            _writer.Write(dataEndPos);
+
             memory.Position = 0;
             using var compressor = new ZLibStream(_stream, CompressionMode.Compress);
             memory.CopyTo(compressor);
