@@ -189,8 +189,8 @@ namespace WoWFileFormats.WMO
                 IndexCount = _reader.ReadUInt16(),
                 FirstVertex = _reader.ReadUInt16(),
                 LastVertex = _reader.ReadUInt16(),
-                MaterialId = _reader.ReadByte(),
                 UseMaterialIdLarge = _reader.ReadByte(),
+                MaterialId = _reader.ReadByte(),
             };
         }
 

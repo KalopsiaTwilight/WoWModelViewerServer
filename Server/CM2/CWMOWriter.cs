@@ -21,6 +21,7 @@ namespace Server.CM2
             var startPos = 0;
             memory.Position = startPos;
 
+            _writer.Write(file.FileDataID);
             _writer.Write(file.Flags);
             _writer.Write(file.WMOId);
             _writer.Write(file.SkyboxFileId);
@@ -59,6 +60,7 @@ namespace Server.CM2
             _writer.Write(file.Version);
             _writer.Write(startPos);
             _writer.Write(materialsPos);
+            _writer.Write(groupInfoPos);
             _writer.Write(doodadDefPos);
             _writer.Write(doodadIdsPos);
             _writer.Write(fogsPos);
@@ -105,6 +107,7 @@ namespace Server.CM2
 
         internal void Write(CWMODoodadDef def)
         {
+            _writer.Write(def.NameOffset);
             _writer.Write(def.Flags);
             Write(def.Position);
             Write(def.Rotation);
@@ -180,11 +183,10 @@ namespace Server.CM2
             _writer.Write(group.Flags2);
             _writer.Write(group.SplitGroupindex);
             _writer.Write(group.NextSplitChildIndex);
-            WriteArray(group.Indices, _writer.Write);
             Write(group.HeaderReplacementColor);
+            WriteArray(group.Indices, _writer.Write);
             WriteArray(group.LiquidData, Write);
             WriteArray(group.BspIndices, _writer.Write);
-            WriteArray(group.LiquidData, Write);
             WriteArray(group.BspNodes, Write);
             WriteArray(group.Vertices, Write);
             WriteArray(group.Normals, Write);
@@ -266,7 +268,7 @@ namespace Server.CM2
 
         private static int GetOutputSize(CWMODoodadDef doodadDef)
         {
-            return 40;
+            return 44;
         }
 
         private static int GetOutputSize(CWMOFog fog)

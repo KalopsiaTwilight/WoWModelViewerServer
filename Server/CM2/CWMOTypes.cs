@@ -7,6 +7,7 @@
 
     public class CWMODoodadDef
     {
+        public uint NameOffset { get; set; }
         public uint Flags { get; set; }
         public Float3 Position { get; set; }
         public Float4 Rotation { get; set; }

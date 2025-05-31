@@ -7,7 +7,7 @@ namespace WoWFileFormats.WMO
 
     public class MOHDChunk : IWowDataChunk
     {
-        public const uint ID = 0x44484F4D;
+        public const uint ID = 0x4D4F4844;
         public uint ChunkId => ID;
 
         public uint TexturesCount { get; set; }
@@ -26,7 +26,7 @@ namespace WoWFileFormats.WMO
 
     public class MODIChunk: IWowDataChunk
     {
-        public const uint ID = 0x49444F4D;
+        public const uint ID = 0x4D4F4449;
 
         public uint ChunkId => ID;
         public uint[] DoodIdList { get; set; } = [];
@@ -34,7 +34,7 @@ namespace WoWFileFormats.WMO
 
     public class MODNChunk : IWowDataChunk
     {
-        public const uint ID = 0x4E444F4D;
+        public const uint ID = 0x4D4F444E;
 
         public uint ChunkId => ID;
 
@@ -43,7 +43,7 @@ namespace WoWFileFormats.WMO
 
     public class MODDChunk : IWowDataChunk
     {
-        public const uint ID = 0x44444F4D;
+        public const uint ID = 0x4D4F4444;
 
         public uint ChunkId => ID;
         public WMODoodadDef[] DoodadDefList { get; set; } = [];
@@ -51,7 +51,7 @@ namespace WoWFileFormats.WMO
 
     public class MODSChunk : IWowDataChunk
     {
-        public const uint ID = 0x53444F4D;
+        public const uint ID = 0x4D4F4453;
         public uint ChunkId => ID;
 
         public WMODoodadSet[] DoodadSetList { get; set; } = [];
@@ -59,42 +59,42 @@ namespace WoWFileFormats.WMO
 
     public class MOTXChunk : IWowDataChunk
     {
-        public const uint ID = 0x58544F4D;
+        public const uint ID = 0x4D4F5458;
         public uint ChunkId => ID;
         public WMOString[] TextureFileNames { get; set; } = [];
     }
 
     public class MOMTChunk : IWowDataChunk
     {
-        public const uint ID = 0x544D4F4D;
+        public const uint ID = 0x4D4F4D54;
         public uint ChunkId => ID;
         public WMOMaterial[] MaterialList { get; set; } = [];
     }
 
     public class MOGNChunk : IWowDataChunk
     {
-        public const uint ID = 0x4E474F4D;
+        public const uint ID = 0x4D4F474E;
         public uint ChunkId => ID;
         public WMOString[] GroupNameList { get; set; } = [];
     }
 
     public class MOGIChunk : IWowDataChunk
     {
-        public const uint ID = 0x49474F4D;
+        public const uint ID = 0x4D4F4749;
         public uint ChunkId => ID;
         public WMOGroupInfo[] GroupInfoList { get; set; } = [];
     }
 
     public class MGI2Chunk : IWowDataChunk
     {
-        public const uint ID = 0x3249474D;
+        public const uint ID = 0x4D474932;
         public uint ChunkId => ID;
         public WMOLodInfo[] MapObjectGroupInfoV2 { get; set; } = [];
     }
 
     public class MFOGChunk: IWowDataChunk
     {
-        public const uint ID = 0x474F464D;
+        public const uint ID = 0x4D464F47;
         public uint ChunkId => ID;
 
         public WMOFog[] FogList { get; set; } = [];
@@ -102,7 +102,7 @@ namespace WoWFileFormats.WMO
 
     public class MOPVChunk: IWowDataChunk
     {
-        public const uint ID = 0x56504F4D;
+        public const uint ID = 0x4D4F5056;
         public uint ChunkId => ID;
 
         public C3Vector[] PortalVertexList { get; set; } = [];
@@ -110,7 +110,7 @@ namespace WoWFileFormats.WMO
 
     public class MOPTChunk: IWowDataChunk
     {
-        public const uint ID = 0x54504F4D;
+        public const uint ID = 0x4D4F5054;
         public uint ChunkId => ID;
 
         public WMOPortal[] PortalList { get; set; } = [];
@@ -118,14 +118,14 @@ namespace WoWFileFormats.WMO
 
     public class MOPRChunk: IWowDataChunk
     {
-        public const uint ID = 0x52504F4D;
+        public const uint ID = 0x4D4F5052;
         public uint ChunkId => ID;
         public WMOPortalRef[] PortalRefList { get; set; } = [];
     }
 
     public class GFIDChunk : IWowDataChunk
     {
-        public const uint ID = 0x44494647;
+        public const uint ID = 0x47464944;
         public uint ChunkId => ID;
 
         public uint[] FileIds { get; set; } = [];
@@ -133,35 +133,35 @@ namespace WoWFileFormats.WMO
 
     public class MAVDChunk: IWowDataChunk
     {
-        public const uint ID = 0x4456414D;
+        public const uint ID = 0x4D415644;
         public uint ChunkId => ID;
         public WMOAmbientVolume[] AmbientVolumes { get; set; } = [];
     }
 
     public class MAVGChunk : IWowDataChunk
     {
-        public const uint ID = 0x4756414D;
+        public const uint ID = 0x4D415647;
         public uint ChunkId => ID;
         public WMOAmbientVolume[] GlobalAmbientVolumes { get; set; } = [];
     }
 
     public class MOSIChunk: IWowDataChunk
     {
-        public const uint ID = 0x49534F4D;
+        public const uint ID = 0x4D4F5349;
         public uint ChunkId => ID;
         public uint SkyboxFileId { get; set; }
     }
 
     public class MOSBChunk: IWowDataChunk
     {
-        public const uint ID = 0x42534F4D;
+        public const uint ID = 0x4D4F5342;
         public uint ChunkId => ID;
 
         public string SkyboxName { get; set; } = string.Empty;
     }
     public class MVERChunk: IWowDataChunk
     {
-        public const uint ID = 0x5245564D;
+        public const uint ID = 0x4D564552;
         public uint ChunkId => ID;
 
         public uint Version { get; set; }

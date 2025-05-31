@@ -68,6 +68,7 @@ namespace Server.CM2
         {
             return new CWMODoodadDef
             {
+                NameOffset = doodadDef.NameOffset,
                 Flags = (uint)doodadDef.Flags,
                 Position = Convert(doodadDef.Position),
                 Rotation = Convert(doodadDef.Rotation),

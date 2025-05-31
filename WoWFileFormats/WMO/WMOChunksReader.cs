@@ -104,7 +104,7 @@ namespace WoWFileFormats.WMO
 
         public MOCVChunk ReadMOCVChunk()
         {
-            var elements = _currentChunkSize / 8;
+            var elements = _currentChunkSize / 4;
             var chunk = new MOCVChunk()
             {
                 ColorVertexList = new CImVector[elements]

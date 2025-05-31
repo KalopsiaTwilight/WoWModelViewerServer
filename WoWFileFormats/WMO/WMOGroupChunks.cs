@@ -17,7 +17,7 @@ namespace WoWFileFormats.WMO
     public class MOGPChunk: IWowDataChunk
     {
 
-        public const uint ID = 0x0;
+        public const uint ID = 0x4D4F4750;
         public uint ChunkId => ID;
         public uint GroupNameOffset { get; set; }
         public uint DescriptiveNameOffset { get; set; }
@@ -39,7 +39,7 @@ namespace WoWFileFormats.WMO
 
     public class MOVIChunk : IWowDataChunk
     {
-        public const uint ID = 0x49564F4D;
+        public const uint ID = 0x4D4F5649;
         public uint ChunkId => ID;
 
         public ushort[] Indices { get; set; } = [];
@@ -47,21 +47,21 @@ namespace WoWFileFormats.WMO
 
     public class MDALChunk : IWowDataChunk
     {
-        public const uint ID = 0x4C41444D;
+        public const uint ID = 0x4D44414C;
         public uint ChunkId => ID;
         public CArgb HeaderColor { get; set; }  
     }
 
     public class MLIQChunk: IWowDataChunk
     {
-        public const uint ID = 0x51494C4D;
+        public const uint ID = 0x4D4C4951;
         public uint ChunkId => ID;
         public WMOLiquid LiquidData { get; set; } = new();
     }
 
     public class MOBRChunk: IWowDataChunk
     {
-        public const uint ID = 0x52424F4D;
+        public const uint ID = 0x4D4F4252;
         public uint ChunkId => ID;
 
         public ushort[] Entries { get; set; } = [];
@@ -69,7 +69,7 @@ namespace WoWFileFormats.WMO
 
     public class MOBNChunk: IWowDataChunk
     {
-        public const uint ID = 0x4E424F4D;
+        public const uint ID = 0x4D4F424E;
         public uint ChunkId => ID;
 
         public WMOBspNode[] Nodes { get; set; } = [];
@@ -77,7 +77,7 @@ namespace WoWFileFormats.WMO
 
     public class MOVTChunk : IWowDataChunk
     {
-        public const uint ID = 0x54564F4D;
+        public const uint ID = 0x4D4F5654;
         public uint ChunkId => ID;
 
         public C3Vector[] Vertices { get; set; } = [];
@@ -85,34 +85,34 @@ namespace WoWFileFormats.WMO
 
     public class MONRChunk : IWowDataChunk
     {
-        public const uint ID = 0x524E4F4D;
+        public const uint ID = 0x4D4F4E52;
         public uint ChunkId => ID;
         public C3Vector[] Normals { get; set; } = [];
     }
 
     public class MOTVChunk : IWowDataChunk
     {
-        public const uint ID = 0x56544F4D;
+        public const uint ID = 0x4D4F5456;
         public uint ChunkId => ID;
         public C2Vector[] UvList { get;set; } = [];
     }
 
     public class MOCVChunk : IWowDataChunk
     {
-        public const uint ID = 0x56434F4D;
+        public const uint ID = 0x4D4F4356;
         public uint ChunkId => ID;
 
         public CImVector[] ColorVertexList { get; set; } = [];
     }
     public class MOBAChunk : IWowDataChunk
     {
-        public const uint ID = 0x41424F4D;
+        public const uint ID = 0x4D4F4241;
         public uint ChunkId => ID;
         public WMOBatch[] Batches { get; set; } = [];
     }
     public class MODRChunk : IWowDataChunk
     {
-        public const uint ID = 0x52444F4D;
+        public const uint ID = 0x4D4F4452;
         public uint ChunkId => ID;
         public ushort[] DoodadReferences { get; set; } = [];
     }
