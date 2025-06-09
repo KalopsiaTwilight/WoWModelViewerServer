@@ -143,7 +143,7 @@ namespace WoWFileFormats.M2
         internal EDGFChunk ReadEDGFChunk()
         {
             var result = new EDGFChunk();
-            var numEntries = chunkSize / 12;
+            var numEntries = chunkSize / 24;
             result.Entries = new EDGFChunkEntry[numEntries];
             for (var i = 0; i < numEntries; i++)
             {
@@ -158,7 +158,7 @@ namespace WoWFileFormats.M2
             {
                 Unk0 = (_reader.ReadSingle(), _reader.ReadSingle()),
                 Unk1 = _reader.ReadSingle(),
-                Unk2 = _reader.ReadSingle(),
+                Unk2 = _reader.ReadBytes(12)
             };
         }
 

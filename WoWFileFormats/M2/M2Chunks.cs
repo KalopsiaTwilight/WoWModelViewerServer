@@ -305,7 +305,7 @@ namespace WoWFileFormats.M2
     {
         public (float, float) Unk0 { get; set; }
         public float Unk1 { get; set; }
-        public float Unk2 { get; set; }
+        public byte[] Unk2 { get; set; } = new byte[12];
     }
     public class EDGFChunk : IWowDataChunk
     {
