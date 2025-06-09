@@ -48,7 +48,7 @@ namespace WoWFileFormats.WMO
             };
             for (var i = 0; i < elements; i++)
             {
-                chunk.DoodIdList[i] = _reader.ReadUInt16();
+                chunk.DoodIdList[i] = _reader.ReadUInt32();
             }
             ;
             return chunk;
