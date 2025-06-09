@@ -172,7 +172,7 @@ namespace WoWFileFormats.WMO
 
             var numTiles = result.LiquidTiles.X * result.LiquidTiles.Y;
             result.Tiles = new WMOLiquidTile[numTiles];
-            for(var i = 0; i < numVertices; i++)
+            for(var i = 0; i < numTiles; i++)
             {
                 result.Tiles[i] = ReadWMOLiquidTile();
             }
