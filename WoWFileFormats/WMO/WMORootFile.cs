@@ -63,25 +63,48 @@ namespace WoWFileFormats.WMO
 
         public void LoadGroupFiles(IFileDataProvider dataProvider)
         {
-            foreach(var id in FileIds)
+            if (LodCount > 0)
             {
-                if (!dataProvider.FileIdExists(id))
+                for (var i = 0; i < LodCount; i++)
                 {
-                    continue;
+                    for (var j = 0; j < GroupsCount; j++)
+                    {
+                        var fileId = FileIds[(int)(i * GroupsCount + j)];
+                        var group = LoadGroupFile(dataProvider, fileId);
+                        if (group == null)
+                        {
+                            continue;
+                        }
+                        group.Lod = i;
+                        GroupFiles.Add(group);
+                    }
                 }
-                using var dataStream = dataProvider.GetFileById(id);
-                using var reader = new WMOFileReader(id, dataStream);
-                var group = reader.ReadWMOGroupFile();
-                GroupFiles.Add(group);
+            } 
+            else
+            {
+                foreach(var fileId in FileIds)
+                {
+                    var group = LoadGroupFile(dataProvider, fileId); 
+                    if (group == null)
+                    {
+                        continue;
+                    }
+                    group.Lod = 0;
+                    GroupFiles.Add(group);
+                }
             }
+        }
 
-            for (var i = 0; i < LodCount; i++)
+        private WMOGroupFile? LoadGroupFile(IFileDataProvider dataProvider, uint fileId)
+        {
+            ;
+            if (!dataProvider.FileIdExists(fileId))
             {
-                for (var j = 0; j < GroupsCount; j++)
-                {
-                    GroupFiles[(int)(i * GroupsCount + j)].Lod = i;
-                }
+                return null;
             }
+            using var dataStream = dataProvider.GetFileById(fileId);
+            using var reader = new WMOFileReader(fileId, dataStream);
+            return reader.ReadWMOGroupFile();
         }
     }
 }
