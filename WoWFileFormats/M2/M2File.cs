@@ -159,7 +159,7 @@ namespace WoWFileFormats.M2
             for (int i = 0; i < Sequences.Length; i++)
             {
                 var sequence = Sequences[i];
-                while ((sequence.Flags & 0x40) == 0x40)
+                while ((sequence.Flags & 0x40) == 0x40 && sequence != Sequences[sequence.AliasNext])
                 {
                     sequence = Sequences[sequence.AliasNext];
                 }

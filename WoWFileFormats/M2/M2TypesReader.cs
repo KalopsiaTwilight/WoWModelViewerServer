@@ -368,7 +368,7 @@ namespace WoWFileFormats.M2
             {
                 var anim = i < _sequences.Length ? _sequences[i] : null;
                 var flags = anim?.Flags ?? 0;
-                while ((flags & 0x40) > 0)
+                while ((flags & 0x40) > 0 && anim != _sequences[anim!.AliasNext])
                 {
                     anim = _sequences[anim!.AliasNext];
                     flags = anim?.Flags ?? 0;
@@ -387,7 +387,7 @@ namespace WoWFileFormats.M2
             {
                 var anim = i < _sequences.Length ? _sequences[i] : null;
                 var flags = anim?.Flags ?? 0;
-                while ((flags & 0x40) > 0)
+                while ((flags & 0x40) > 0 && anim != _sequences[anim!.AliasNext])
                 {
                     anim = _sequences[anim!.AliasNext];
                     flags = anim?.Flags ?? 0;
