@@ -8,7 +8,7 @@
         }
 
 
-        public M2File ReadM2File()
+        public M2File? ReadM2File()
         {
             M2File result = new()
             {
@@ -17,48 +17,59 @@
 
             _chunkOffSet = 0;
 
-            while (_stream.Position < _stream.Length)
+            try
             {
-                var chunkId = _reader.ReadUInt32();
-                chunkSize = _reader.ReadUInt32();
-                var nextChunkPos = _stream.Position + chunkSize;
-
-                switch (chunkId)
+                while (_stream.Position < _stream.Length)
                 {
-                    case MD21Chunk.ID:
-                        {
-                            Process_MD21Chunk(result);
-                            break;
-                        }
-                    case PFIDChunk.ID: { Process_PFIDChunk(result); break; }
-                    case SFIDChunk.ID: { Process_SFIDChunk(result); break; }
-                    case AFIDChunk.ID: { Process_AFIDChunk(result); break; }
-                    case BFIDChunk.ID: { Process_BFIDChunk(result); break; }
-                    case TXACChunk.ID: { Process_TXACChunk(result); break; }
-                    case EXPTChunk.ID: { Process_EXPTChunk(result); break; }
-                    case EXP2Chunk.ID: { Process_EXP2Chunk(result); break; }
-                    case PABCChunk.ID: { Process_PABCChunk(result); break; }
-                    case PADCChunk.ID: { Process_PADCChunk(result); break; }
-                    case PSBCChunk.ID: { Process_PSBCChunk(result); break; }
-                    case PEDCChunk.ID: { Process_PEDCChunk(result); break; }
-                    case SKIDChunk.ID: { Process_SKIDChunk(result); break; }
-                    case TXIDChunk.ID: { Process_TXIDChunk(result); break; }
-                    case LDV1Chunk.ID: { Process_LDV1Chunk(result); break; }
-                    case RPIDChunk.ID: { Process_RPIDChunk(result); break; }
-                    case GPIDChunk.ID: { Process_GPIDChunk(result); break; }
-                    case WFV1Chunk.ID: { break; }
-                    case WFV2Chunk.ID: { break; }
-                    case PGD1Chunk.ID: { Process_PGD1Chunk(result); break; }
-                    case WFV3Chunk.ID: { Process_WFV3Chunk(result); break; }
-                    case PFDCChunk.ID: { break; }
-                    case EDGFChunk.ID: { Process_EDGFChunk(result); break; }
-                    case NERFChunk.ID: { Process_NERFChunk(result); break; }
-                    case DETLChunk.ID: { Process_DETLChunk(result); break; }
-                    case DBOCChunk.ID: { Process_DBOCChunk(result); break; }
-                    default: { throw new Exception("Unknown M2 Chunk encountered: " + chunkId); }
-                }
+                    var chunkId = _reader.ReadUInt32();
+                    chunkSize = _reader.ReadUInt32();
+                    var nextChunkPos = _stream.Position + chunkSize;
 
-                _stream.Position = nextChunkPos;
+                    switch (chunkId)
+                    {
+                        case MD21Chunk.ID:
+                            {
+                                Process_MD21Chunk(result);
+                                break;
+                            }
+                        case PFIDChunk.ID: { Process_PFIDChunk(result); break; }
+                        case SFIDChunk.ID: { Process_SFIDChunk(result); break; }
+                        case AFIDChunk.ID: { Process_AFIDChunk(result); break; }
+                        case BFIDChunk.ID: { Process_BFIDChunk(result); break; }
+                        case TXACChunk.ID: { Process_TXACChunk(result); break; }
+                        case EXPTChunk.ID: { Process_EXPTChunk(result); break; }
+                        case EXP2Chunk.ID: { Process_EXP2Chunk(result); break; }
+                        case PABCChunk.ID: { Process_PABCChunk(result); break; }
+                        case PADCChunk.ID: { Process_PADCChunk(result); break; }
+                        case PSBCChunk.ID: { Process_PSBCChunk(result); break; }
+                        case PEDCChunk.ID: { Process_PEDCChunk(result); break; }
+                        case SKIDChunk.ID: { Process_SKIDChunk(result); break; }
+                        case TXIDChunk.ID: { Process_TXIDChunk(result); break; }
+                        case LDV1Chunk.ID: { Process_LDV1Chunk(result); break; }
+                        case RPIDChunk.ID: { Process_RPIDChunk(result); break; }
+                        case GPIDChunk.ID: { Process_GPIDChunk(result); break; }
+                        case WFV1Chunk.ID: { break; }
+                        case WFV2Chunk.ID: { break; }
+                        case PGD1Chunk.ID: { Process_PGD1Chunk(result); break; }
+                        case WFV3Chunk.ID: { Process_WFV3Chunk(result); break; }
+                        case PFDCChunk.ID: { break; }
+                        case EDGFChunk.ID: { Process_EDGFChunk(result); break; }
+                        case NERFChunk.ID: { Process_NERFChunk(result); break; }
+                        case DETLChunk.ID: { Process_DETLChunk(result); break; }
+                        case DBOCChunk.ID: { Process_DBOCChunk(result); break; }
+                        default:
+                            {
+                                // Unknown chunk, data is probably not as it should be
+                                return null;
+                            }
+                    }
+
+                    _stream.Position = nextChunkPos;
+                }
+            }
+            catch(InvalidArrayOffsetException)
+            {
+                return null;
             }
 
             return result;

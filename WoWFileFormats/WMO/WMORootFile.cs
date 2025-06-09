@@ -65,6 +65,10 @@ namespace WoWFileFormats.WMO
         {
             foreach(var id in FileIds)
             {
+                if (!dataProvider.FileIdExists(id))
+                {
+                    continue;
+                }
                 using var dataStream = dataProvider.GetFileById(id);
                 using var reader = new WMOFileReader(id, dataStream);
                 var group = reader.ReadWMOGroupFile();

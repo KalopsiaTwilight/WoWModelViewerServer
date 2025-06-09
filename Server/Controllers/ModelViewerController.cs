@@ -134,7 +134,13 @@ namespace Server.Controllers
 
             using var m2Reader = new M2FileReader(fileId, fileData);
 
-            var m2File = m2Reader.ReadM2File();
+            var m2File = m2Reader.ReadM2File(); 
+            if (m2File == null)
+            {
+                Response.StatusCode = 404;
+                await Response.CompleteAsync();
+                return;
+            }
             m2File.LoadSkins(_fileDataProvider);
             m2File.LoadSkeleton(_fileDataProvider);
             m2File.LoadAnims(_fileDataProvider);
@@ -163,6 +169,13 @@ namespace Server.Controllers
             using var wmoReader = new WMOFileReader(fileId, fileData);
 
             var wmoFile = wmoReader.ReadWMORootFile();
+            if (wmoFile == null)
+            {
+                Response.StatusCode = 404;
+                await Response.CompleteAsync();
+                return;
+            }
+
             wmoFile.LoadGroupFiles(_fileDataProvider);
             var cwmoFile = CWMOConverter.Convert(wmoFile);
 

@@ -478,8 +478,17 @@ namespace WoWFileFormats.M2
 
             T[] result = new T[arrayLength];
 
+            if (arrayLength == 0)
+                return result;
+
             var currentOffset = _stream.Position;
-            _stream.Position = _chunkOffSet + arrayOffset;
+            var arrayPos = _chunkOffSet + arrayOffset;
+
+            if (arrayPos > _stream.Length)
+            {
+                throw new InvalidArrayOffsetException(arrayPos, _stream.Length); 
+            }
+            _stream.Position = arrayPos;
             for (var i = 0; i < arrayLength; i++)
             {
                 result[i] = deserializeFn(i);

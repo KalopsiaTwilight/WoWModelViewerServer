@@ -18,13 +18,14 @@ namespace WoWFileFormats.WMO
             _fileDataId = fileDataId;
         }
 
-        public WMORootFile ReadWMORootFile()
+        public WMORootFile? ReadWMORootFile()
         {
             WMORootFile result = new()
             {
                 FileDataID = _fileDataId
             };
 
+            var processedChunks = 0;
             while (_stream.Position < _stream.Length)
             {
                 var chunkId = _reader.ReadUInt32();
@@ -58,114 +59,133 @@ namespace WoWFileFormats.WMO
                             result.BoundingBox = chunk.BoundingBox;
                             result.Flags = chunk.Flags;
                             result.LodCount = chunk.LodCount;
+                            processedChunks++;
                             break;
                         }
                     case MODIChunk.ID:
                         {
                             var chunk = ReadMODIChunk();
                             result.DoodadIdList.AddRange(chunk.DoodIdList);
+                            processedChunks++;
                             break;
                         }
                     case MODNChunk.ID:
                         {
                             var chunk = ReadMODNChunk();
                             result.DoodadNamesList.AddRange(chunk.DoodadNamesList);
+                            processedChunks++;
                             break;
                         }
                     case MODDChunk.ID:
                         {
                             var chunk = ReadMODDChunk();
                             result.DoodadDefList.AddRange(chunk.DoodadDefList);
+                            processedChunks++;
                             break;
                         }
                     case MODSChunk.ID:
                         {
                             var chunk = ReadMODSChunk();
                             result.DoodadSetList.AddRange(chunk.DoodadSetList);
+                            processedChunks++;
                             break;
                         }
                     case MOTXChunk.ID:
                         {
                             var chunk = ReadMOTXChunk();
                             result.TextureFileNames.AddRange(chunk.TextureFileNames);
+                            processedChunks++;
                             break;
                         }
                     case MOMTChunk.ID:
                         {
                             var chunk = ReadMOMTChunk();
                             result.MaterialList.AddRange(chunk.MaterialList);
+                            processedChunks++;
                             break;
                         }
                     case MOGNChunk.ID:
                         {
                             var chunk = ReadMOGNChunk();
                             result.GroupNameList.AddRange(chunk.GroupNameList);
+                            processedChunks++;
                             break;
                         }
                     case MOGIChunk.ID:
                         {
                             var chunk = ReadMOGIChunk();
                             result.GroupInfoList.AddRange(chunk.GroupInfoList);
+                            processedChunks++;
                             break;
                         }
                     case MGI2Chunk.ID:
                         {
                             var chunk = ReadMGI2Chunk();
                             result.MapObjectGroupInfoV2.AddRange(chunk.MapObjectGroupInfoV2);
+                            processedChunks++;
                             break;
                         }
                     case MFOGChunk.ID:
                         {
                             var chunk = ReadMFOGChunk();
                             result.FogList.AddRange(chunk.FogList);
+                            processedChunks++;
                             break;
                         }
                     case MOPVChunk.ID:
                         {
                             var chunk = ReadMOPVChunk();
                             result.PortalVertexList.AddRange(chunk.PortalVertexList);
+                            processedChunks++;
                             break;
                         }
                     case MOPTChunk.ID:
                         {
                             var chunk = ReadMOPTChunk();
                             result.PortalList.AddRange(chunk.PortalList);
+                            processedChunks++;
                             break;
                         }
                     case MOPRChunk.ID:
                         {
                             var chunk = ReadMOPRChunk();
                             result.PortalRefList.AddRange(chunk.PortalRefList);
+                            processedChunks++;
                             break;
                         }
                     case GFIDChunk.ID:
                         {
                             var chunk = ReadGFIDChunk();
                             result.FileIds.AddRange(chunk.FileIds);
+                            processedChunks++;
                             break;
                         }
                     case MAVDChunk.ID:
                         {
                             var chunk = ReadMAVDChunk();
                             result.AmbientVolumes.AddRange(chunk.AmbientVolumes);
+                            processedChunks++;
                             break;
                         }
                     case MAVGChunk.ID:
                         {
                             var chunk = ReadMAVGChunk();
                             result.GlobalAmbientVolumes.AddRange(chunk.GlobalAmbientVolumes);
+                            processedChunks++;
                             break;
                         }
                     case MOSIChunk.ID:
                         {
                             var chunk = ReadMOSIChunk();
                             result.SkyboxFileId = chunk.SkyboxFileId;
+                            processedChunks++;
                             break;
                         }
                     case MOSBChunk.ID:
                         {
                             var chunk = ReadMOSBChunk();
                             result.SkyboxName = chunk.SkyboxName;
+                            processedChunks++;
                             break;
                         }
                     default:
@@ -176,6 +196,11 @@ namespace WoWFileFormats.WMO
                 }
 
                 _stream.Position = nextChunkPos;
+            }
+
+            if (processedChunks <= 1)
+            {
+                return null;
             }
 
             return result;
