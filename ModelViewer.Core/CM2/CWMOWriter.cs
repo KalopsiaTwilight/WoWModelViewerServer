@@ -1,11 +1,6 @@
-﻿
-using System;
-using System.IO.Compression;
-using System.Runtime.InteropServices;
-using System.Xml.Linq;
-using WoWFileFormats.M2;
+﻿using System.IO.Compression;
 
-namespace Server.CM2
+namespace ModelViewer.Core.CM2
 {
     public class CWMOWriter : BaseCompressedWriter
     {
@@ -165,6 +160,7 @@ namespace Server.CM2
         internal void Write(CWMOGroup group)
         {
             _writer.Write(group.FileDataID);
+            _writer.Write(group.Lod);
             _writer.Write(group.Flags);
             Write(group.BoundingBoxMin);
             Write(group.BoundingBoxMax);

@@ -1,6 +1,6 @@
 ﻿using WoWFileFormats.WMO;
 
-namespace Server.CM2
+namespace ModelViewer.Core.CM2
 {
     public class CWMOConverter : BaseCompressedConverter
     {
@@ -34,6 +34,7 @@ namespace Server.CM2
         {
             return new CWMOGroup()
             {
+                Lod = groupFile.Lod,
                 Batches = groupFile.Batches.Select(Convert).ToArray(),
                 BoundingBoxMin = Convert(groupFile.BoundingBox.Min),
                 BoundingBoxMax = Convert(groupFile.BoundingBox.Max),

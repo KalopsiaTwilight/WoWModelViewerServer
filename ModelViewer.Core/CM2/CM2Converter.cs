@@ -1,6 +1,6 @@
 ﻿using WoWFileFormats.M2;
 
-namespace Server.CM2
+namespace ModelViewer.Core.CM2
 {
     public class CM2Converter: BaseCompressedConverter
     {

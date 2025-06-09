@@ -1,8 +1,6 @@
-﻿using System.Numerics;
-using System.Runtime.InteropServices;
-using WoWFileFormats.Common;
+﻿using WoWFileFormats.Common;
 
-namespace Server.CM2
+namespace ModelViewer.Core.CM2
 {
     using Color = (byte R, byte G, byte B, byte A);
     using Float2 = (float X, float Y);

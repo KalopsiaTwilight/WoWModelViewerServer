@@ -1,7 +1,4 @@
-﻿using WoWFileFormats.Common;
-using WoWFileFormats.WMO;
-
-namespace Server.CM2
+﻿namespace ModelViewer.Core.CM2
 {
     using Float2 = (float X, float Y);
     using Float3 = (float X, float Y, float Z);
@@ -35,6 +32,7 @@ namespace Server.CM2
     {
         public uint FileDataID { get; set; }
         public uint Flags { get; set; }
+        public int Lod { get; set; }
         public Float3 BoundingBoxMin { get; set; }
         public Float3 BoundingBoxMax { get; set; }
         public ushort PortalsOffset { get; set; }

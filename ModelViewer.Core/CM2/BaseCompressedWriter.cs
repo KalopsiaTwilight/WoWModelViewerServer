@@ -1,6 +1,6 @@
-﻿namespace Server.CM2
+﻿namespace ModelViewer.Core.CM2
 {
-    public class BaseCompressedWriter
+    public class BaseCompressedWriter: IDisposable
     {
         protected readonly Stream _stream;
         protected BinaryWriter _writer;
@@ -9,6 +9,12 @@
         {
             _stream = stream;
             _writer = new BinaryWriter(stream);
+        }
+
+        public void Dispose()
+        {
+            _writer.Dispose();
+            _stream.Dispose();
         }
 
         protected void Write((int, int) value)

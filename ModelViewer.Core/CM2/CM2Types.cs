@@ -1,4 +1,4 @@
-﻿namespace Server.CM2
+﻿namespace ModelViewer.Core.CM2
 {
     using Float2 = (float X, float Y);
     using Float3 = (float X, float Y, float Z);

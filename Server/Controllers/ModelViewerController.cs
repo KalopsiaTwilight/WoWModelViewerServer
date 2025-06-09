@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using ModelViewer.Core.CM2;
 using ModelViewer.Core.Components;
 using SereniaBLPLib;
-using Server.CM2;
 using Server.Infrastructure;
 using SixLabors.ImageSharp;
 using WoWFileFormats.Interfaces;
