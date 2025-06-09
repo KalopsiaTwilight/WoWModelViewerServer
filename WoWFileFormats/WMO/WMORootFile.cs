@@ -74,6 +74,14 @@ namespace WoWFileFormats.WMO
                 var group = reader.ReadWMOGroupFile();
                 GroupFiles.Add(group);
             }
+
+            for (var i = 0; i < LodCount; i++)
+            {
+                for (var j = 0; j < GroupsCount; j++)
+                {
+                    GroupFiles[(int)(i * GroupsCount + j)].Lod = i;
+                }
+            }
         }
     }
 }

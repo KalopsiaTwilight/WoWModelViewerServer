@@ -10,6 +10,8 @@ namespace WoWFileFormats.WMO
     public class WMOGroupFile
     {
         public uint FileDataID { get; set; }
+
+        public int Lod { get; set; }
         // MOGP
         public uint GroupNameOffset { get; set; }
         public uint DescriptiveNameOffset { get; set; }
