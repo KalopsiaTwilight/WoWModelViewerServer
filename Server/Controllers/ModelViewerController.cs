@@ -18,10 +18,11 @@ namespace Server.Controllers
         private readonly CharacterMetadataComponent _charMetadataComponent;
         private readonly CharacterCustomizationMetadataComponent _charCustomizationMetadataComponent;
         private readonly ItemVisualComponent _itemVisualComponent;
+        private readonly LiquidMetadataComponent _liquidMetadataComponent;
 
         public ModelViewerController(
             IFileDataProvider fileDataProvider, ItemMetadataComponent itemMetadataComponent, CharacterMetadataComponent charMetadataComponent,
-            CharacterCustomizationMetadataComponent charCustomizationMetadataComponent, ItemVisualComponent itemVisualComponent
+            CharacterCustomizationMetadataComponent charCustomizationMetadataComponent, ItemVisualComponent itemVisualComponent, LiquidMetadataComponent liquidMetadataComponent
         )
         {
             _fileDataProvider = fileDataProvider;
@@ -29,6 +30,7 @@ namespace Server.Controllers
             _charMetadataComponent = charMetadataComponent;
             _charCustomizationMetadataComponent = charCustomizationMetadataComponent;
             _itemVisualComponent = itemVisualComponent;
+            _liquidMetadataComponent = liquidMetadataComponent;
         }
 
         [HttpGet]
@@ -73,6 +75,30 @@ namespace Server.Controllers
         {
             var metadata = _itemVisualComponent.GetItemVisualMetadata(visualId);
             if (metadata == null) {
+                return NotFound();
+            }
+            return Ok(metadata);
+        }
+
+        [HttpGet]
+        [Route("/modelviewer/metadata/liquidtype/{liquidTypeId}.json")]
+        public ActionResult GetLiquidTypeMetadata(int liquidTypeId)
+        {
+            var metadata = _liquidMetadataComponent.GetLiquidTypeMetadata(liquidTypeId);
+            if (metadata == null)
+            {
+                return NotFound();
+            }
+            return Ok(metadata);
+        }
+
+        [HttpGet]
+        [Route("/modelviewer/metadata/liquidobject/{liquidObjectId}.json")]
+        public ActionResult GetLiquidObjectMetadata(int liquidObjectId)
+        {
+            var metadata = _liquidMetadataComponent.GetLiquidObjectMetadata(liquidObjectId);
+            if (metadata == null)
+            {
                 return NotFound();
             }
             return Ok(metadata);
