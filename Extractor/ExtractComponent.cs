@@ -1,6 +1,10 @@
 ﻿using ModelViewer.Core.CM2;
+using ModelViewer.Core.Components;
+using ModelViewer.Core.Providers;
 using SereniaBLPLib;
 using SixLabors.ImageSharp;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using WoWFileFormats.Interfaces;
 using WoWFileFormats.M2;
 using WoWFileFormats.WMO;
@@ -15,31 +19,43 @@ namespace Extractor
 
     internal class ExtractComponent
     {
-        private IFileDataProvider fileDataProvider;
+        private IFileDataProvider _fileDataProvider;
+        private IDBCDStorageProvider _dbcdStorageProvider;
         private IMessageWriter messages;
-        private string outputPath = string.Empty;
+        private JsonSerializerOptions _jsonOptions;
+        private string _outputPath = string.Empty;
 
         const string texturePath = "modelviewer/textures/";
         const string characterMetadataPath = "modelviewer/metadata/character/";
         const string characterCustomizationMetadataPath = "modelviewer/metadata/charactercustomization/";
         const string itemMetadataPath = "modelviewer/metadata/item/";
         const string itemVisualMetadataPath = "modelviewer/metadata/itemvisual/";
+        const string liquidTypePath = "modelviewer/metadata/liquidtype/";
+        const string liquidObjectPath = "modelviewer/metadata/liquidobject/";
         const string bonePath = "modelviewer/bone/";
         const string modelPath = "modelviewer/models/";
 
-        public ExtractComponent(IFileDataProvider fileDataProvider, string outputPath, IMessageWriter outputWriter)
+        public ExtractComponent(IFileDataProvider fileDataProvider, IDBCDStorageProvider dbcdStorageProvider, string outputPath, IMessageWriter outputWriter)
         {
-            this.fileDataProvider = fileDataProvider;
-            this.outputPath = outputPath;
+            _fileDataProvider = fileDataProvider;
+            _outputPath = outputPath;
+            _dbcdStorageProvider = dbcdStorageProvider;
             messages = outputWriter;
+            _jsonOptions = new JsonSerializerOptions()
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            };
         }
 
         public void Initialize()
         {
-            string[] paths = [texturePath, characterMetadataPath, characterCustomizationMetadataPath, itemMetadataPath, itemVisualMetadataPath, bonePath, modelPath];
+            string[] paths = [
+                texturePath, characterMetadataPath, characterCustomizationMetadataPath, itemMetadataPath, itemVisualMetadataPath, bonePath, modelPath,
+                liquidTypePath, liquidObjectPath
+            ];
             foreach(var path in paths)
             {
-                var fullPath = Path.Combine(outputPath, path);
+                var fullPath = Path.Combine(_outputPath, path);
                 if (!Directory.Exists(fullPath))
                 {
                     Directory.CreateDirectory(fullPath);
@@ -47,19 +63,44 @@ namespace Extractor
             }
         }
 
+        public void ExtractLiquidTypes() {
+            var liquidComponent = new LiquidMetadataComponent(_dbcdStorageProvider);
+            var availableIds = _dbcdStorageProvider["LiquidType"].Keys;
+
+            messages.WriteLine("Extracting liquid type metadata...");
+            foreach(var id in availableIds) {
+                var metadata = liquidComponent.GetLiquidTypeMetadata(id);
+                if (metadata == null)
+                {
+                    messages.WriteLine($"Unable to create metadata for LiquidType {id}, skipping.");
+                }
+
+                var outputPath = Path.Combine(_outputPath, liquidTypePath, $"{id}.json");
+                if (File.Exists(outputPath))
+                {
+                    messages.WriteLine($"Skipping LiquidType {id}, already processed.");
+                }
+
+                var json = JsonSerializer.Serialize(metadata, _jsonOptions);
+                File.WriteAllText(outputPath, json);
+
+                messages.WriteLine($"Liquid type {id} sucessfully written to output folder.");
+            }
+        }
+
         public void ExtractWmo(uint fileId)
         {
-            var outputPath = Path.Combine(this.outputPath, modelPath, $"{fileId}.cwmo");
+            var outputPath = Path.Combine(this._outputPath, modelPath, $"{fileId}.cwmo");
             if (File.Exists(outputPath))
             {
                 messages.WriteLine($"Skipping M2 file {fileId}, already processed.");
                 return;
             }
-            if (!fileDataProvider.FileIdExists(fileId)) {
+            if (!_fileDataProvider.FileIdExists(fileId)) {
                 messages.WriteLine("Unable to find WMO file with fileId: " + fileId);
                 return;
             }
-            var fileData = fileDataProvider.GetFileById(fileId);
+            var fileData = _fileDataProvider.GetFileById(fileId);
             var reader = new WMOFileReader(fileId, fileData);
             var wmo = reader.ReadWMORootFile();
             if (wmo == null)
@@ -67,7 +108,7 @@ namespace Extractor
                 messages.WriteLine($"WMO file {fileId} was not a valid root WMO file.");
                 return;
             }
-            wmo.LoadGroupFiles(fileDataProvider);
+            wmo.LoadGroupFiles(_fileDataProvider);
             var cwmo = CWMOConverter.Convert(wmo);
             using var outputStream = File.OpenWrite(outputPath);
             using var writer = new CWMOWriter(outputStream);
@@ -98,18 +139,18 @@ namespace Extractor
 
         public void ExtractM2(uint fileId)
         {
-            var outputPath = Path.Combine(this.outputPath, modelPath, $"{fileId}.cm2");
+            var outputPath = Path.Combine(this._outputPath, modelPath, $"{fileId}.cm2");
             if (File.Exists(outputPath))
             {
                 messages.WriteLine($"Skipping M2 file {fileId}, already processed.");
                 return;
             }
-            if (!fileDataProvider.FileIdExists(fileId))
+            if (!_fileDataProvider.FileIdExists(fileId))
             {
                 messages.WriteLine("Unable to find M2 file with fileId: " + fileId);
                 return;
             }
-            var fileData = fileDataProvider.GetFileById(fileId);
+            var fileData = _fileDataProvider.GetFileById(fileId);
 
             using var m2Reader = new M2FileReader(fileId, fileData);
 
@@ -120,9 +161,9 @@ namespace Extractor
                 return;
             }
 
-            m2File.LoadSkins(fileDataProvider);
-            m2File.LoadSkeleton(fileDataProvider);
-            m2File.LoadAnims(fileDataProvider);
+            m2File.LoadSkins(_fileDataProvider);
+            m2File.LoadSkeleton(_fileDataProvider);
+            m2File.LoadAnims(_fileDataProvider);
             var cm2File = CM2Converter.Convert(m2File);
             using var outputStream = File.OpenWrite(outputPath);
             using var cm2Writer = new CM2Writer(outputStream);
@@ -137,19 +178,19 @@ namespace Extractor
 
         public void ExtractTexture(uint fileId)
         {
-            var outputPath = Path.Combine(this.outputPath, texturePath, $"{fileId}.webp");
+            var outputPath = Path.Combine(this._outputPath, texturePath, $"{fileId}.webp");
             if (File.Exists(outputPath))
             {
                 messages.WriteLine($"Skipping BLP file {fileId}, already processed.");
                 return;
             }
-            if (!fileDataProvider.FileIdExists(fileId))
+            if (!_fileDataProvider.FileIdExists(fileId))
             {
                 messages.WriteLine("Unable to find BLP file with fileId: " + fileId);
                 return;
             }
 
-            var fileData = fileDataProvider.GetFileById(fileId);
+            var fileData = _fileDataProvider.GetFileById(fileId);
             var blp = new BlpFile(fileData);
 
             var img = blp.GetImage(0);

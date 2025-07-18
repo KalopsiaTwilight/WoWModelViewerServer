@@ -23,9 +23,10 @@ var dbcd = new DBCD.DBCD(dbcProvider, dbdProvider);
 var dbcdStorageProvider = new DBCDStorageProvider(dbcd);
 
 var messageWriter = new ConsoleMessageWriter();
-var extractComponent = new ExtractComponent(fileDataProvider, outputPath, messageWriter);
+var extractComponent = new ExtractComponent(fileDataProvider, dbcdStorageProvider, outputPath, messageWriter);
 extractComponent.Initialize();
 
+// TODO: Make M2, WMO extraction automatic somehow
 var toExtract = File.ReadAllLines("extract.txt").Select(x =>
 {
     var split = x.Split("-");
@@ -54,10 +55,4 @@ foreach (var todo in toExtract)
     }
 }
 
-//builder.Services.AddSingleton<IFileDataProvider, CASCFileDataProvider>();
-//builder.Services.AddSingleton<IDBCDStorageProvider, DBCDStorageProvider>();
-
-////Add Transients;
-//builder.Services.AddTransient<IDBCProvider, FileDataDBCProvider>();
-//builder.Services.AddTransient<IDBDProvider, GithubDBDProvider>();
-//builder.Services.AddTransient<DBCD.DBCD>(
+extractComponent.ExtractLiquidTypes();
