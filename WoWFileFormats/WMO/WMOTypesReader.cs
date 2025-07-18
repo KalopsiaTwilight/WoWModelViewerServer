@@ -146,11 +146,11 @@ namespace WoWFileFormats.WMO
             var data = _reader.ReadByte();
             return new WMOLiquidTile()
             {
-                LegacyLiquidType = GetBits(data, 0, 4),
-                Unknown1 = GetBits(data, 4, 1),
-                Unknown2 = GetBits(data, 5, 1),
-                Fishable = GetBits(data, 6, 1),
-                Shared = GetBits(data, 7, 1)
+                Unknown1 = GetBits(data, 0, 1),
+                Unknown2 = GetBits(data, 1, 1),
+                Fishable = GetBits(data, 2, 1),
+                Shared = GetBits(data, 3, 1),
+                LegacyLiquidType = GetBits(data, 4, 4),
             };
         }
 
