@@ -4,3 +4,6 @@
 [submodule "SereniaBLPLib"]
 	path = SereniaBLPLib
 	url = https://github.com/Marlamin/SereniaBLPLib
+[submodule "TACTSharp"]
+	path = TACTSharp
+	url = https://github.com/wowdev/TACTSharp

@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModelViewer.Core", "ModelVi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Extractor", "Extractor\Extractor.csproj", "{7048D4D3-0A00-4A70-8220-20BD19F1CC95}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TACTSharp", "TACTSharp\TACTSharp\TACTSharp.csproj", "{884A4B58-7B4E-73BF-73CC-48C2E526EC3D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,6 +49,10 @@ Global
 		{7048D4D3-0A00-4A70-8220-20BD19F1CC95}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7048D4D3-0A00-4A70-8220-20BD19F1CC95}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7048D4D3-0A00-4A70-8220-20BD19F1CC95}.Release|Any CPU.Build.0 = Release|Any CPU
+		{884A4B58-7B4E-73BF-73CC-48C2E526EC3D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{884A4B58-7B4E-73BF-73CC-48C2E526EC3D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{884A4B58-7B4E-73BF-73CC-48C2E526EC3D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{884A4B58-7B4E-73BF-73CC-48C2E526EC3D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -54,6 +60,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{1B23A2F6-EB83-4453-ADAB-CBB78DFDF111} = {44358BDF-BD19-4702-A904-1C2792D34902}
 		{46210D36-DC31-4AF9-A760-1C590D8CDF62} = {44358BDF-BD19-4702-A904-1C2792D34902}
+		{884A4B58-7B4E-73BF-73CC-48C2E526EC3D} = {44358BDF-BD19-4702-A904-1C2792D34902}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {30766F7B-8D73-416B-834B-C6AFEE09EBD7}
