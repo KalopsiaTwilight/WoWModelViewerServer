@@ -73,6 +73,7 @@ namespace Extractor
                 if (metadata == null)
                 {
                     messages.WriteLine($"Unable to create metadata for LiquidType {id}, skipping.");
+                    continue;
                 }
 
                 var outputPath = Path.Combine(_outputPath, liquidTypePath, $"{id}.json");
@@ -83,6 +84,14 @@ namespace Extractor
 
                 var json = JsonSerializer.Serialize(metadata, _jsonOptions);
                 File.WriteAllText(outputPath, json);
+
+                foreach (var texture in metadata.Textures)
+                {
+                    if (texture.FileDataId > 0)
+                    {
+                        ExtractTexture((uint)texture.FileDataId);
+                    }
+                }
 
                 messages.WriteLine($"Liquid type {id} sucessfully written to output folder.");
             }
