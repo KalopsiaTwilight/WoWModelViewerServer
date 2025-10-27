@@ -19,10 +19,12 @@ namespace Server.Controllers
         private readonly CharacterCustomizationMetadataComponent _charCustomizationMetadataComponent;
         private readonly ItemVisualComponent _itemVisualComponent;
         private readonly LiquidMetadataComponent _liquidMetadataComponent;
+        private readonly TextureVariationsMetadataComponent _textureVariationsMetadataComponent;
 
         public ModelViewerController(
             IFileDataProvider fileDataProvider, ItemMetadataComponent itemMetadataComponent, CharacterMetadataComponent charMetadataComponent,
-            CharacterCustomizationMetadataComponent charCustomizationMetadataComponent, ItemVisualComponent itemVisualComponent, LiquidMetadataComponent liquidMetadataComponent
+            CharacterCustomizationMetadataComponent charCustomizationMetadataComponent, ItemVisualComponent itemVisualComponent, LiquidMetadataComponent liquidMetadataComponent,
+            TextureVariationsMetadataComponent textureVariationsMetadataComponent
         )
         {
             _fileDataProvider = fileDataProvider;
@@ -31,6 +33,7 @@ namespace Server.Controllers
             _charCustomizationMetadataComponent = charCustomizationMetadataComponent;
             _itemVisualComponent = itemVisualComponent;
             _liquidMetadataComponent = liquidMetadataComponent;
+            _textureVariationsMetadataComponent = textureVariationsMetadataComponent;
         }
 
         [HttpGet]
@@ -97,6 +100,18 @@ namespace Server.Controllers
         public ActionResult GetLiquidObjectMetadata(int liquidObjectId)
         {
             var metadata = _liquidMetadataComponent.GetLiquidObjectMetadata(liquidObjectId);
+            if (metadata == null)
+            {
+                return NotFound();
+            }
+            return Ok(metadata);
+        }
+
+        [HttpGet]
+        [Route("/modelviewer/metadata/texturevariations/{modelId}.json")]
+        public ActionResult GetTextureVariationsMetadata(int modelId)
+        {
+            var metadata = _textureVariationsMetadataComponent.GetTextureVariationsForModel(modelId);
             if (metadata == null)
             {
                 return NotFound();
