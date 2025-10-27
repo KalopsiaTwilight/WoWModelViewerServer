@@ -11,7 +11,7 @@ namespace ModelViewer.Core.Providers
 
         private readonly BuildInstance _buildInstance;
 
-        public TACTSharpFileDataProvider(IConfiguration config)
+        public TACTSharpFileDataProvider(IConfiguration config, HttpClient httpClient)
         {
             _buildInstance = new BuildInstance();
 
@@ -41,6 +41,19 @@ namespace ModelViewer.Core.Providers
             if (!string.IsNullOrEmpty(build.Armadillo))
             {
                 _buildInstance.cdn.ArmadilloKeyName = build.Armadillo;
+            }
+
+
+            // Load encryption keys;
+            if (!File.Exists("WoW.txt"))
+            {
+                var githubUrl = "https://raw.githubusercontent.com/wowdev/TACTKeys/refs/heads/master/WoW.txt";
+                httpClient.GetStreamAsync(githubUrl).ContinueWith(async data =>
+                {
+                    var stream = await data;
+                    var outStream = File.OpenWrite("WoW.txt");
+                    stream.CopyTo(outStream);
+                }).Wait();
             }
 
             _buildInstance.cdn.OpenLocal();
