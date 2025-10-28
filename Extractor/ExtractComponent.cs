@@ -34,6 +34,7 @@ namespace Extractor
         const string liquidObjectPath = "modelviewer/metadata/liquidobject/";
         const string bonePath = "modelviewer/bone/";
         const string modelPath = "modelviewer/models/";
+        const string textureVariationMetadataPath = "modelviewer/metadata/texturevariations/";
 
         public ExtractComponent(IFileDataProvider fileDataProvider, IDBCDStorageProvider dbcdStorageProvider, string outputPath, IMessageWriter outputWriter)
         {
@@ -51,7 +52,7 @@ namespace Extractor
         {
             string[] paths = [
                 texturePath, characterMetadataPath, characterCustomizationMetadataPath, itemMetadataPath, itemVisualMetadataPath, bonePath, modelPath,
-                liquidTypePath, liquidObjectPath
+                liquidTypePath, liquidObjectPath, textureVariationMetadataPath
             ];
             foreach(var path in paths)
             {
@@ -80,6 +81,7 @@ namespace Extractor
                 if (File.Exists(outputPath))
                 {
                     messages.WriteLine($"Skipping LiquidType {id}, already processed.");
+                    continue;
                 }
 
                 var json = JsonSerializer.Serialize(metadata, _jsonOptions);
@@ -97,9 +99,46 @@ namespace Extractor
             }
         }
 
+        public void ExtractTextureVariations(uint fileId)
+        {
+            var metadataComponent = new TextureVariationsMetadataComponent(_dbcdStorageProvider);
+
+            messages.WriteLine($"Extracting texture variations for file {fileId}...");
+            var outputPath = Path.Combine(_outputPath, textureVariationMetadataPath, $"{fileId}.json");
+
+
+            if (File.Exists(outputPath))
+            {
+                messages.WriteLine($"Skipping texture variation for {fileId}, already processed.");
+                return;
+            }
+
+            var metadata = metadataComponent.GetTextureVariationsForModel((int)fileId);
+
+            if (metadata == null)
+            {
+                messages.WriteLine($"No texture variation for {fileId} available.");
+                return;
+            }
+
+            var json = JsonSerializer.Serialize(metadata, _jsonOptions);
+            File.WriteAllText(outputPath, json);
+
+
+            foreach (var variation in metadata.TextureVariations)
+            {
+                foreach(var textureId in variation.TextureIds)
+                {
+                    ExtractTexture((uint)textureId);
+                }
+            }
+
+            messages.WriteLine($"Texture variations for {fileId} sucessfully written to output folder.");
+        }
+
         public void ExtractWmo(uint fileId)
         {
-            var outputPath = Path.Combine(this._outputPath, modelPath, $"{fileId}.cwmo");
+            var outputPath = Path.Combine(_outputPath, modelPath, $"{fileId}.cwmo");
             if (File.Exists(outputPath))
             {
                 messages.WriteLine($"Skipping M2 file {fileId}, already processed.");

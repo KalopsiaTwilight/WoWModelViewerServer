@@ -16,6 +16,7 @@ var cascPath = config["CASC:BasePath"];
 Console.WriteLine("Starting extractor using CASC path: " + cascPath);
 Console.WriteLine("Writing to output path: " + outputPath);
 
+//var fileDataProvider = new TACTSharpFileDataProvider(config, new HttpClient());
 var fileDataProvider = new CASCFileDataProvider(config);
 var dbcProvider = new FileDataDBCProvider(fileDataProvider);
 var dbdProvider = new GithubDBDProvider();
@@ -45,6 +46,7 @@ foreach (var todo in toExtract)
         case "m2":
             {
                 extractComponent.ExtractM2(todo.FileId);
+                extractComponent.ExtractTextureVariations(todo.FileId);
                 break;
             }
         case "wmo":
