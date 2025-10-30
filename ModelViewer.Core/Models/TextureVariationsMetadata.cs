@@ -7,8 +7,16 @@ using System.Threading.Tasks;
 namespace ModelViewer.Core.Models
 {
 
+    public enum DisplayType
+    {
+        Item,
+        Creature
+    }
+
     public class TextureVariation
     {
+        public int DisplayId { get; set; }
+        public DisplayType DisplayType { get; set; }
         public int[] TextureIds { get; set; } = [];
     }
 

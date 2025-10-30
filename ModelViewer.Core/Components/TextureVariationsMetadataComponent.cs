@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace ModelViewer.Core.Components
 {
-    public class CreatureTextureEqualityComparer : IEqualityComparer<int[]>
+    public class TextureIntArrayEqualityComparer : IEqualityComparer<int[]>
     {
         public bool Equals(int[]? x, int[]? y)
         {
@@ -23,7 +23,20 @@ namespace ModelViewer.Core.Components
 
         public int GetHashCode([DisallowNull] int[] obj)
         {
-            return 12348 ^ obj[1] + 23829 ^ obj[0] + 1235910 ^ obj[2];
+            if (obj == null) 
+                return 0;
+            // Item info
+            if (obj.Length == 1)
+            {
+                return obj[0];
+            }
+
+            var hashCode = 0;
+            for(var i = 0; i < obj.Length; i++)
+            {
+                hashCode ^= i * 1237182 ^ obj[i];
+            }
+            return hashCode;
         }
     }
 
@@ -45,8 +58,8 @@ namespace ModelViewer.Core.Components
             var modelResourceId = modelFileDataRow.Field<int>("ModelResourcesID");
             var idis = _dbcdStorageProvider["ItemDisplayInfo"].Where(x => x.Field<int[]>("ModelResourcesID").Contains(modelResourceId));
 
-            var idiTextures = new List<int>();
-            foreach(var idi in idis)
+            var textureVariations = new List<TextureVariation>();
+            foreach (var idi in idis)
             {
                 var modelResources = idi.Field<int[]>("ModelResourcesID");
                 var modelMaterialResources = idi.Field<int[]>("ModelMaterialResourcesID");
@@ -55,29 +68,22 @@ namespace ModelViewer.Core.Components
                 var textureDataRow = _dbcdStorageProvider["TextureFileData"].FirstOrDefault(x => x.Field<int>("MaterialResourcesID") == modelMaterialResourceId);
                 if (textureDataRow != null)
                 {
-                    idiTextures.Add(textureDataRow.ID);
+                    textureVariations.Add(new TextureVariation() { TextureIds = [textureDataRow.ID], DisplayType = DisplayType.Item, DisplayId = idi.ID });
                 }
             }
 
-            var textureVariations = idiTextures.Distinct().Select(x => new TextureVariation { TextureIds = [x] }).ToList();
-
             var creatureModels = _dbcdStorageProvider["CreatureModelData"].Where(x => x.Field<int>("FileDataID") == modelId);
-            var creatureVariations = new List<int[]>();
             foreach(var model in creatureModels)
             {
                 var creatureDisplayInfos = _dbcdStorageProvider["CreatureDisplayInfo"].Where(x => x.Field<int>("ModelID") == model.ID);
                 foreach(var displayInfo in creatureDisplayInfos)
                 {
-                    creatureVariations.Add(displayInfo.Field<int[]>("TextureVariationFileDataID"));
+                    textureVariations.Add(new TextureVariation { DisplayId = displayInfo.ID, DisplayType = DisplayType.Creature, TextureIds = displayInfo.Field<int[]>("TextureVariationFileDataID") });
                 }
             }
 
 
-            textureVariations.AddRange(
-                creatureVariations.Distinct(new CreatureTextureEqualityComparer()).Select(x => new TextureVariation { TextureIds = x })
-            );
-
-            return new TextureVariationsMetadata() { TextureVariations = textureVariations };
+            return new TextureVariationsMetadata() { TextureVariations = textureVariations.DistinctBy(x => x.TextureIds, new TextureIntArrayEqualityComparer()).ToList() };
         }
     }
 }
