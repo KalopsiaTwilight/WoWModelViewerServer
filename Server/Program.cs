@@ -23,7 +23,7 @@ namespace Server
 
             // Add service singletons
             builder.Services.AddSingleton<IFileDataProvider, CASCFileDataProvider>();
-            // builder.Services.AddSingleton<IFileDataProvider, TACTSharpFileDataProvider>();
+            //builder.Services.AddSingleton<IFileDataProvider, TACTSharpFileDataProvider>();
             builder.Services.AddSingleton<IDBCDStorageProvider, DBCDStorageProvider>();
 
             //Add Transients;
