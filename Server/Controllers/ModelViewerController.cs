@@ -280,13 +280,15 @@ namespace Server.Controllers
             if (string.IsNullOrEmpty(cachePath))
             {
                 stream = new MemoryStream();
+                await img.SaveAsWebpAsync(stream);
+                stream.Position = 0;
             } else
             {
                 stream = System.IO.File.OpenWrite(cachePath);
+                await img.SaveAsWebpAsync(stream);
+                stream.Dispose();
+                stream = System.IO.File.OpenRead(cachePath);
             }
-
-            await img.SaveAsWebpAsync(stream);
-            stream.Position = 0;
 
             return File(stream, "image/webp");
         }
