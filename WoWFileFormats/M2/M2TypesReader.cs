@@ -373,7 +373,7 @@ namespace WoWFileFormats.M2
                     anim = _sequences[anim!.AliasNext];
                     flags = anim?.Flags ?? 0;
                 }
-                if ((flags & 0x20) > 0)
+                if ((flags & 0x20) > 0 || result.GlobalSequence > 0)
                 {
                     return ReadM2Array(_reader.ReadInt32);
                 }
@@ -392,7 +392,7 @@ namespace WoWFileFormats.M2
                     anim = _sequences[anim!.AliasNext];
                     flags = anim?.Flags ?? 0;
                 }
-                if ((flags & 0x20) > 0)
+                if ((flags & 0x20) > 0 || result.GlobalSequence > 0)
                 {
                     return ReadM2Array(deserializeTFn);
                 }
