@@ -63,7 +63,7 @@ namespace ModelViewer.Core.Components
                     .HavingColumnVal("ChrCustomizationOptionID", opt.ID);
                 foreach (var choice in choiceRows)
                 {
-                    var choiceData = new CharacterCustomizationOptionChoiceData()
+                    var choiceData = new CharacterCustomizationChoiceData()
                     {
                         Id = choice.ID,
                         Name = choice.Field<string>("Name_lang"),
@@ -73,10 +73,11 @@ namespace ModelViewer.Core.Components
                         .HavingColumnVal("ChrCustomizationChoiceID", choice.ID);
                     foreach (var elem in elemRows)
                     {
-                        CharacterCustomizationOptionChoiceElementBoneSetData? boneSet = null;
-                        CharacterCustomizationOptionChoiceElementGeosetData? geoset = null;
-                        CharacterCustomizationOptionChoiceElementMaterialData? material = null;
-                        CharacterCustomizationOptionChoiceElementSkinnedModelData? skinnedModel = null;
+                        CharacterCustomizationBoneSetData? boneSet = null;
+                        CharacterCustomizationGeosetData? geoset = null;
+                        CharacterCustomizationMaterialData? material = null;
+                        CharacterCustomizationSkinnedModelData? skinnedModel = null;
+                        CharacterCustomizationtItemGeoModifyData? itemGeoModify = null;
                         uint condModelFileDataId = 0;
 
                         if (elem.Field<int>("ChrCustomizationBoneSetID") != 0)
@@ -127,7 +128,7 @@ namespace ModelViewer.Core.Components
 
                         if (elem.Field<int>("ChrCustomizationSkinnedModelID") != 0)
                         {
-                            var skinnedModelData = _dbcdStorageProvider["ChrCustomizationSkinnedModel"][elem.Field<int>("ChrCustomizationSkinnedModel")];
+                            var skinnedModelData = _dbcdStorageProvider["ChrCustomizationSkinnedModel"][elem.Field<int>("ChrCustomizationSkinnedModelID")];
                             skinnedModel = new()
                             {
                                 CollectionsFileDataId = skinnedModelData.Field<int>("CollectionsFileDataID"),
@@ -145,18 +146,29 @@ namespace ModelViewer.Core.Components
                             condModelFileDataId = condCmdData?.Field<uint>("FileDataID") ?? 0;
                         }
 
+                        if (elem.Field<int>("ChrCustItemGeoModifyID") != 0)
+                        {
+                            var itemGeomodifyData = _dbcdStorageProvider["ChrCustItemGeoModify"][elem.Field<int>("ChrCustItemGeoModifyID")];
+                            itemGeoModify = new()
+                            {
+                                GeosetType = itemGeomodifyData.Field<int>("GeosetType"),
+                                Original = itemGeomodifyData.Field<int>("Original"),
+                                Override = itemGeomodifyData.Field<int>("Override"),
+                            };
+                        }
+
                         var relationChoiceId = elem.Field<int>("RelatedChrCustomizationChoiceID");
                         _dbcdStorageProvider["ChrCustomizationChoice"].TryGetValue(relationChoiceId, out var variationChoice);
-                        choiceData.Elements.Add(new CharacterCustomizationOptionChoiceElementData()
+                        choiceData.Elements.Add(new CharacterCustomizationElementData()
                         {
                             Id = elem.ID,
                             RelationIndex = variationChoice?.Field<int>("OrderIndex") ?? -1,
                             RelationChoiceID = relationChoiceId,
-                            ChrCustItemGeoModifyId = elem.Field<int>("ChrCustItemGeoModifyID"),
                             BoneSet = boneSet,
                             ConditionalModelFileDataId = condModelFileDataId,
                             Geoset = geoset,
                             Material = material,
+                            CustItemGeoModify = itemGeoModify,
                             SkinnedModel = skinnedModel,
                         });
                     }

@@ -108,7 +108,7 @@ namespace ModelViewer.Core.Components
             var modelResourceID1 = displayInfo.Field<int[]>("ModelResourcesID")[1];
             if (modelResourceID1 != 0)
             {
-                modelData.Component1 = new ItemComponentData
+                modelData.Component2 = new ItemComponentData
                 {
                     ModelFiles = GetModelFiles(modelResourceID1)
                 };

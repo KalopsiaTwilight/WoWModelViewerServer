@@ -33,54 +33,61 @@
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public int OrderIndex { get; set; }
-        public List<CharacterCustomizationOptionChoiceData> Choices { get; set; } = [];
+        public List<CharacterCustomizationChoiceData> Choices { get; set; } = [];
     }
 
-    public class CharacterCustomizationOptionChoiceData
+    public class CharacterCustomizationChoiceData
     {
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public int OrderIndex { get; set; }
-        public List<CharacterCustomizationOptionChoiceElementData> Elements { get; set; } = [];
+        public List<CharacterCustomizationElementData> Elements { get; set; } = [];
     }
 
-    public class CharacterCustomizationOptionChoiceElementData
+    public class CharacterCustomizationElementData
     {
         public int Id { get; set; }
-        public int ChrCustItemGeoModifyId { get; set; }
         public uint ConditionalModelFileDataId { get; set; }
         public int RelationChoiceID { get; set; }
         public int RelationIndex { get; set; }
-        public CharacterCustomizationOptionChoiceElementBoneSetData? BoneSet { get; set; }
-        public CharacterCustomizationOptionChoiceElementGeosetData? Geoset { get; set; }
-        public CharacterCustomizationOptionChoiceElementMaterialData? Material { get; set; }
-        public CharacterCustomizationOptionChoiceElementSkinnedModelData? SkinnedModel { get; set; }
+        public CharacterCustomizationBoneSetData? BoneSet { get; set; }
+        public CharacterCustomizationGeosetData? Geoset { get; set; }
+        public CharacterCustomizationMaterialData? Material { get; set; }
+        public CharacterCustomizationSkinnedModelData? SkinnedModel { get; set; }
+        public CharacterCustomizationtItemGeoModifyData? CustItemGeoModify { get; set; }
     }
 
-    public class CharacterCustomizationOptionChoiceElementBoneSetData
+    public class CharacterCustomizationBoneSetData
     {
         public int BoneFileDataId { get; set; }
         public int ModelFileDataId { get; set; }
     }
 
-    public class CharacterCustomizationOptionChoiceElementMaterialData
+    public class CharacterCustomizationMaterialData
     {
         public int ChrModelTextureTargetId { get; set; }
         public List<TextureFileData> TextureFiles { get; set; } = [];
     }
-    public class CharacterCustomizationOptionChoiceElementGeosetData
+    public class CharacterCustomizationGeosetData
     {
         public int GeosetType { get; set; }
         public int GeosetId { get; set; }
         public int Modifier { get; set; }
     }
-    public class CharacterCustomizationOptionChoiceElementSkinnedModelData
+    public class CharacterCustomizationSkinnedModelData
     {
         public int CollectionsFileDataId { get; set; }
         public int GeosetType { get; set; }
         public int GeosetId { get; set; }
         public int Modifier { get; set; }
         public int Flags { get; set; }
+    }
+
+    public class CharacterCustomizationtItemGeoModifyData
+    {
+        public int GeosetType { get; set; }
+        public int Original { get; set; }
+        public int Override { get; set; }
     }
 
     public class CharacterCustomizationTextureLayerData
