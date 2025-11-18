@@ -305,7 +305,9 @@ namespace Server.Controllers
                 if (System.IO.File.Exists(cachePath))
                 {
                     Response.Headers.ContentType = "application/octet-stream";
-                    await System.IO.File.OpenRead(cachePath).CopyToAsync(Response.Body);
+                    var fileStream = System.IO.File.OpenRead(cachePath);
+                    await fileStream.CopyToAsync(Response.Body);
+                    fileStream.Dispose();
                     await Response.CompleteAsync();
                     return;
                 }
@@ -361,7 +363,9 @@ namespace Server.Controllers
                 if (System.IO.File.Exists(cachePath))
                 {
                     Response.Headers.ContentType = "application/octet-stream";
-                    await System.IO.File.OpenRead(cachePath).CopyToAsync(Response.Body);
+                    var fileStream = System.IO.File.OpenRead(cachePath);
+                    await fileStream.CopyToAsync(Response.Body);
+                    fileStream.Dispose();
                     await Response.CompleteAsync();
                     return;
                 }
@@ -426,7 +430,9 @@ namespace Server.Controllers
                 if (System.IO.File.Exists(cachePath))
                 {
                     Response.Headers.ContentType = "application/octet-stream";
-                    await System.IO.File.OpenRead(cachePath).CopyToAsync(Response.Body);
+                    var fileStream = System.IO.File.OpenRead(cachePath);
+                    await fileStream.CopyToAsync(Response.Body);
+                    fileStream.Dispose();
                     await Response.CompleteAsync();
                     return;
                 }
