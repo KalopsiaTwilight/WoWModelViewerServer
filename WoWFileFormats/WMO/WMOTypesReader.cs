@@ -27,7 +27,7 @@ namespace WoWFileFormats.WMO
         {
             return new WMODoodadSet()
             {
-                Name = Encoding.UTF8.GetString(_reader.ReadBytes(20)),
+                Name = Encoding.UTF8.GetString(_reader.ReadBytes(20).Where(x => x != 0).ToArray()),
                 StartIndex = _reader.ReadUInt32(),
                 Count = _reader.ReadUInt32(),
                 Unused = _reader.ReadUInt32(),

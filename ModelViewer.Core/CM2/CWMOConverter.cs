@@ -83,7 +83,8 @@ namespace ModelViewer.Core.CM2
             return new CWMODoodadSet()
             {
                 StartIndex = doodadSet.StartIndex,
-                Count = doodadSet.Count
+                Count = doodadSet.Count,
+                Name = doodadSet.Name
             };
         }
 

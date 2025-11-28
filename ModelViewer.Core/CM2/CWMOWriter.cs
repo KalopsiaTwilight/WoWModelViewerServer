@@ -1,4 +1,5 @@
 ﻿using System.IO.Compression;
+using System.Text;
 
 namespace ModelViewer.Core.CM2
 {
@@ -128,6 +129,7 @@ namespace ModelViewer.Core.CM2
         {
             _writer.Write(doodadSet.StartIndex);
             _writer.Write(doodadSet.Count);
+            WriteArray(Encoding.UTF8.GetBytes(doodadSet.Name), _writer.Write);
         }
 
         internal void Write(CWMOPortalRef portalRef)

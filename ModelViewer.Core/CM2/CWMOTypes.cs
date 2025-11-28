@@ -19,6 +19,7 @@
     {
         public uint StartIndex { get; set; }
         public uint Count { get; set; }
+        public string Name { get; set; } = string.Empty;
     }
 
     public class CWMOMaterial
