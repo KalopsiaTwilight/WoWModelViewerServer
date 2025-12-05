@@ -148,7 +148,7 @@ namespace Extractor
                 messages.WriteLine("Unable to find WMO file with fileId: " + fileId);
                 return;
             }
-            var fileData = _fileDataProvider.GetFileById(fileId);
+            using var fileData = _fileDataProvider.GetFileById(fileId);
             var reader = new WMOFileReader(fileId, fileData);
             var wmo = reader.ReadWMORootFile();
             if (wmo == null)
@@ -198,7 +198,7 @@ namespace Extractor
                 messages.WriteLine("Unable to find M2 file with fileId: " + fileId);
                 return;
             }
-            var fileData = _fileDataProvider.GetFileById(fileId);
+            using var fileData = _fileDataProvider.GetFileById(fileId);
 
             using var m2Reader = new M2FileReader(fileId, fileData);
 
@@ -238,7 +238,7 @@ namespace Extractor
                 return;
             }
 
-            var fileData = _fileDataProvider.GetFileById(fileId);
+            using var fileData = _fileDataProvider.GetFileById(fileId);
 
             var blp = new BLPFile(fileData);
 

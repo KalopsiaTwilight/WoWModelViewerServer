@@ -273,7 +273,7 @@ namespace Server.Controllers
             {
                 return NotFound();
             }
-            var fileData = _fileDataProvider.GetFileById(fileId);
+            using var fileData = _fileDataProvider.GetFileById(fileId);
             var blp = new BLPFile(fileData);
 
             var pixels = blp.GetPixels(0, out int w, out int h);
@@ -323,7 +323,7 @@ namespace Server.Controllers
                 return;
             }
 
-            var fileData = _fileDataProvider.GetFileById(fileId);
+            using var fileData = _fileDataProvider.GetFileById(fileId);
 
             using var reader = new BONEFileReader(fileData);
             var boneFile = reader.ReadBONEFile();
@@ -379,7 +379,7 @@ namespace Server.Controllers
                 await Response.CompleteAsync();
                 return;
             }
-            var fileData = _fileDataProvider.GetFileById(fileId);
+            using var fileData = _fileDataProvider.GetFileById(fileId);
 
             using var m2Reader = new M2FileReader(fileId, fileData);
 
@@ -446,7 +446,7 @@ namespace Server.Controllers
                 await Response.CompleteAsync();
                 return;
             }
-            var fileData = _fileDataProvider.GetFileById(fileId);
+            using var fileData = _fileDataProvider.GetFileById(fileId);
 
             using var wmoReader = new WMOFileReader(fileId, fileData);
 
