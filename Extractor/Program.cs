@@ -12,19 +12,24 @@ var config = configBuilder.Build();
 
 var outputPath = config["OutputPath"] ?? "";
 var cascPath = config["CASC:BasePath"];
+if (string.IsNullOrEmpty(cascPath))
+{
+    throw new Exception("A valid CASC path in the config is required to run the extractor.");
+}
 
 Console.WriteLine("Starting extractor using CASC path: " + cascPath);
 Console.WriteLine("Writing to output path: " + outputPath);
 
-//var fileDataProvider = new TACTSharpFileDataProvider(config, new HttpClient());
-var fileDataProvider = new CASCFileDataProvider(config);
-var dbcProvider = new FileDataDBCProvider(fileDataProvider);
+//var fileDataProvider = new TACTSharpFileDataProvider(config, new HttpClient
+var fallBackProvider = new CASCFileDataProvider(config);
+var arctProvider = new ArctiumOverrideFileDataProvider(fallBackProvider, cascPath);
+var dbcProvider = new FileDataDBCProvider(arctProvider);
 var dbdProvider = new GithubDBDProvider();
 var dbcd = new DBCD.DBCD(dbcProvider, dbdProvider);
 var dbcdStorageProvider = new DBCDStorageProvider(dbcd);
 
 var messageWriter = new ConsoleMessageWriter();
-var extractComponent = new ExtractComponent(fileDataProvider, dbcdStorageProvider, outputPath, messageWriter);
+var extractComponent = new ExtractComponent(arctProvider, dbcdStorageProvider, outputPath, messageWriter);
 extractComponent.Initialize();
 
 // TODO: Make M2, WMO extraction automatic somehow
