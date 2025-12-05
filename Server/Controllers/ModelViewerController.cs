@@ -1,12 +1,12 @@
-﻿using Microsoft.AspNetCore.Http.Json;
+﻿using BLPSharp;
+using Microsoft.AspNetCore.Http.Json;
 using Microsoft.AspNetCore.Mvc;
 using ModelViewer.Core.CM2;
 using ModelViewer.Core.Components;
 using ModelViewer.Core.Models;
-using SereniaBLPLib;
 using Server.Infrastructure;
 using SixLabors.ImageSharp;
-using System.IO;
+using SixLabors.ImageSharp.PixelFormats;
 using System.Text.Json;
 using WoWFileFormats.Interfaces;
 using WoWFileFormats.M2;
@@ -268,14 +268,16 @@ namespace Server.Controllers
             }
 
 
+
             if (!_fileDataProvider.FileIdExists(fileId))
             {
                 return NotFound();
             }
             var fileData = _fileDataProvider.GetFileById(fileId);
-            var blp = new BlpFile(fileData);
+            var blp = new BLPFile(fileData);
 
-            var img = blp.GetImage(0);
+            var pixels = blp.GetPixels(0, out int w, out int h);
+            var img = Image.LoadPixelData<Bgra32>(pixels, w, h);
             Stream stream;
             if (string.IsNullOrEmpty(cachePath))
             {

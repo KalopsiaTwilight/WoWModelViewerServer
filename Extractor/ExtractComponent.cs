@@ -1,10 +1,10 @@
-﻿using ModelViewer.Core.CM2;
+﻿using BLPSharp;
+using ModelViewer.Core.CM2;
 using ModelViewer.Core.Components;
 using ModelViewer.Core.Providers;
-using SereniaBLPLib;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using WoWFileFormats.Interfaces;
 using WoWFileFormats.M2;
 using WoWFileFormats.WMO;
@@ -239,10 +239,11 @@ namespace Extractor
             }
 
             var fileData = _fileDataProvider.GetFileById(fileId);
-            var blp = new BlpFile(fileData);
 
-            var img = blp.GetImage(0);
+            var blp = new BLPFile(fileData);
 
+            var pixels = blp.GetPixels(0, out int w, out int h);
+            var img = Image.LoadPixelData<Bgra32>(pixels, w, h);
             img.SaveAsWebp(outputPath);
 
             messages.WriteLine($"BLP file {fileId} succesfully writen to output folder.");
