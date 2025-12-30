@@ -4,6 +4,7 @@ using ModelViewer.Core.Components;
 using ModelViewer.Core.Providers;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
 using WoWFileFormats.Interfaces;
 using WoWFileFormats.M2;
@@ -27,7 +28,6 @@ namespace Extractor
 
         const string texturePath = "modelviewer/textures/";
         const string characterMetadataPath = "modelviewer/metadata/character/";
-        const string characterCustomizationMetadataPath = "modelviewer/metadata/charactercustomization/";
         const string itemMetadataPath = "modelviewer/metadata/item/";
         const string itemVisualMetadataPath = "modelviewer/metadata/itemvisual/";
         const string liquidTypePath = "modelviewer/metadata/liquidtype/";
@@ -51,7 +51,7 @@ namespace Extractor
         public void Initialize()
         {
             string[] paths = [
-                texturePath, characterMetadataPath, characterCustomizationMetadataPath, itemMetadataPath, itemVisualMetadataPath, bonePath, modelPath,
+                texturePath, characterMetadataPath, itemMetadataPath, itemVisualMetadataPath, bonePath, modelPath,
                 liquidTypePath, liquidObjectPath, textureVariationMetadataPath
             ];
             foreach(var path in paths)
@@ -61,6 +61,140 @@ namespace Extractor
                 {
                     Directory.CreateDirectory(fullPath);
                 }
+            }
+        }
+
+        public void ExtractCharacterModelMetadata()
+        {
+            var charComponent = new CharacterMetadataComponent(_dbcdStorageProvider);
+            var availableIds = _dbcdStorageProvider["ChrModel"].Keys;
+
+            messages.WriteLine("Extracting character model metadata...");
+            foreach (var id in availableIds)
+            {
+                messages.WriteLine($"Extracting character model metadata for Character Model {id}...");
+                var metadata = charComponent.GetMetadataForCharacter(id);
+                if (metadata == null)
+                {
+                    messages.WriteLine($"Unable to create metadata for Character Model {id}, skipping.");
+                    continue;
+                }
+
+                var outputPath = Path.Combine(_outputPath, characterMetadataPath, $"{id}.json");
+                if (File.Exists(outputPath))
+                {
+                    messages.WriteLine($"Skipping character metadata for Character Model {id}, already processed.");
+                    continue;
+                }
+
+                var json = JsonSerializer.Serialize(metadata, _jsonOptions);
+                File.WriteAllText(outputPath, json);
+
+                ExtractM2(metadata.FileDataId);
+                if (metadata.CharacterCustomizationData != null)
+                {
+                    foreach (var opt in metadata.CharacterCustomizationData.Options)
+                    {
+                        foreach(var choice in opt.Choices)
+                        {
+                            foreach(var elem in choice.Elements)
+                            {
+                                if (elem.SkinnedModel != null)
+                                {
+                                    ExtractM2((uint) elem.SkinnedModel.CollectionsFileDataId);
+                                }
+                                if (elem.ConditionalModelFileDataId != 0)
+                                {
+                                    ExtractM2(elem.ConditionalModelFileDataId);
+                                }
+                                if (elem.BoneSet != null)
+                                {
+                                    if (elem.BoneSet.ModelFileDataId != 0)
+                                    {
+                                        ExtractM2((uint)elem.BoneSet.ModelFileDataId);
+                                    }
+                                    if (elem.BoneSet.BoneFileDataId != 0)
+                                    {
+                                        ExtractBoneFile((uint) elem.BoneSet.BoneFileDataId);
+                                    }
+                                }
+                                if (elem.Material != null)
+                                {
+                                    foreach(var file in elem.Material.TextureFiles)
+                                    {
+                                        ExtractTexture(file.FileDataId);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+
+                messages.WriteLine($"Character Model {id} metadata sucessfully written to output folder.");
+            }
+        }
+
+        public void ExtractItemMetadata()
+        {
+            var itemComponent = new ItemMetadataComponent(_dbcdStorageProvider);
+            var availableIds = _dbcdStorageProvider["ItemDisplayInfo"].Keys;
+
+            messages.WriteLine("Extracting Item display metadata...");
+            foreach (var id in availableIds)
+            {
+                messages.WriteLine($"Extracting metadata for Item Display Info {id}...");
+                var metadata = itemComponent.GetMetadataForDisplayId(id);
+                if (metadata == null)
+                {
+                    messages.WriteLine($"Unable to create metadata for Item Display Info {id}, skipping.");
+                    continue;
+                }
+
+                var outputPath = Path.Combine(_outputPath, itemMetadataPath, $"{id}.json");
+                if (File.Exists(outputPath))
+                {
+                    messages.WriteLine($"Skipping character metadata for Item Display Info {id}, already processed.");
+                    continue;
+                }
+
+                var json = JsonSerializer.Serialize(metadata, _jsonOptions);
+                File.WriteAllText(outputPath, json);
+
+                if (metadata.Component1 != null)
+                {
+                    foreach(var texture in metadata.Component1.TextureFiles)
+                    {
+                        ExtractTexture(texture.FileDataId);
+                    }
+                    foreach(var model in metadata.Component1.ModelFiles)
+                    {
+                        ExtractM2(model.FileDataId);
+                    }
+                }
+                if (metadata.Component2 != null)
+                {
+                    foreach (var texture in metadata.Component2.TextureFiles)
+                    {
+                        ExtractTexture(texture.FileDataId);
+                    }
+                    foreach (var model in metadata.Component2.ModelFiles)
+                    {
+                        ExtractM2(model.FileDataId);
+                    }
+                }
+                if (metadata.ComponentSections != null)
+                {
+                    foreach(var section in metadata.ComponentSections)
+                    {
+                        foreach (var texture in section.Textures)
+                        {
+                            ExtractTexture(texture.FileDataId);
+                        }
+                    }
+                }
+
+                messages.WriteLine($"Item Display Info {id} metadata sucessfully written to output folder.");
             }
         }
 
@@ -222,6 +356,38 @@ namespace Extractor
             {
                 ExtractTexture(texture.FileId);
             }
+        }
+
+        public void ExtractBoneFile(uint fileId)
+        {
+            var outputPath = Path.Combine(_outputPath, bonePath, $"{fileId}.cbone");
+            if (File.Exists(outputPath))
+            {
+                messages.WriteLine($"Skipping BONE file {fileId}, already processed.");
+                return;
+            }
+            if (!_fileDataProvider.FileIdExists(fileId))
+            {
+                messages.WriteLine("Unable to find BONE file with fileId: " + fileId);
+                return;
+            }
+
+            using var fileData = _fileDataProvider.GetFileById(fileId);
+
+            using var reader = new BONEFileReader(fileData);
+            var boneFile = reader.ReadBONEFile();
+
+            if (boneFile == null)
+            {
+                messages.WriteLine($"BONE file {fileId} was not a valid BONE file, perhaps encrypted?");
+                return;
+            }
+
+            var cm2BoneFile = CM2Converter.Convert(boneFile);
+            using var outputStream = File.OpenWrite(outputPath);
+            using var cm2Writer = new CM2Writer(outputStream);
+            cm2Writer.Write(cm2BoneFile);
+            messages.WriteLine($"BONE file {fileId} succesfully writen to output folder.");
         }
 
         public void ExtractTexture(uint fileId)

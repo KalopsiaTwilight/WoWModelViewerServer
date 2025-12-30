@@ -36,8 +36,15 @@ namespace ModelViewer.Core.Components
                 return null;
             }
 
+            try
+            {
             var item = _dbcdStorageProvider["Item"][itemModAppearance.Field<int>("ItemID")];
             return GetMetadata(item, displayInfo);
+            }
+            catch(KeyNotFoundException)
+            {
+                return null;
+            }
         }
 
 

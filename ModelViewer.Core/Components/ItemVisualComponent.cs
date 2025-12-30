@@ -20,13 +20,11 @@ namespace ModelViewer.Core.Components
                 return null;
             }
 
-            var modelFiles = visualInfo.Field<int[]>("ModelFileID");
             var effects = _dbcdStorageProvider["ItemVisualsXEffect"]
                 .HavingColumnVal("ItemVisualsID", visualId);
 
             var result = new ItemVisualMetadata()
             {
-                ModelFileIds = modelFiles,
                 Effects = effects.Select(x =>
                 {
                     SpellVisualKitData? kit = null;

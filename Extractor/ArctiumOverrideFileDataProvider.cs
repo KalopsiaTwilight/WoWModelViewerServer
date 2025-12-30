@@ -20,7 +20,7 @@ namespace Extractor
                 var kvPairs = lines.Select(x => {
                     var split = x.Split(';');
                     uint fileId = uint.Parse(split[0]);
-                    var filePath = Path.Join(rootDir, split[1]);
+                    var filePath = Path.Join(rootDir, "files", split[1]);
                     return new KeyValuePair<uint, string>(fileId, filePath);
                 });
                 foreach(var kvPair in kvPairs)

@@ -2,7 +2,6 @@
 {
     public class ItemVisualMetadata
     {
-        public int[] ModelFileIds { get; set; } = [];
         public List<ItemVisualEffectsData>? Effects { get; set; }
     }
 
