@@ -1,5 +1,19 @@
 ﻿namespace ModelViewer.Core.Models
 {
+    public class ItemToDisplayInfoMetadata
+    {
+        public int ItemId { get; set;  }
+        public int InventoryType { get; set;  }
+        public List<ItemDisplayInfoData> DisplayInfos { get; set; } = [];
+    }
+
+    public class ItemDisplayInfoData
+    {
+        public int DisplayInfoId { get; set;  }
+        public int ItemAppearanceModifierId { get; set; }
+        public List<int> BonusIds { get; set; } = [];
+    }
+
     public class ItemMetadata
     {
         public int Flags { get; set; }

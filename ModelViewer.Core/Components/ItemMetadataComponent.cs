@@ -14,6 +14,45 @@ namespace ModelViewer.Core.Components
             _dbcdStorageProvider = storageProvider;
         }
 
+        public ItemToDisplayInfoMetadata? GetDisplayInfoMetadataForItem(int itemId)
+        {
+            if (!_dbcdStorageProvider["Item"].TryGetValue(itemId, out var item))
+            {
+                return null;
+            }
+
+            var itemAppearances = _dbcdStorageProvider["ItemModifiedAppearance"]
+                .Where((x) => x.Field<int>("ItemID") == item.ID)
+                .ToList();
+
+            var displayInfos = new List<ItemDisplayInfoData>();
+            foreach(var row in itemAppearances)
+            {
+                var modifierId = row.Field<int>("ItemAppearanceModifierID");
+
+                _dbcdStorageProvider["ItemAppearance"].TryGetValue(row.Field<int>("ItemAppearanceID"), out var appearance);
+
+                var bonusIds = _dbcdStorageProvider["ItemBonus"]
+                    .Where(x => x.Field<int>("Type") == 7 && x.Field<int[]>("Value")[0] == modifierId)
+                    .Select(x => x.ID)
+                    .ToList();
+
+                displayInfos.Add(new ItemDisplayInfoData()
+                {
+                    DisplayInfoId = appearance?.Field<int>("ItemDisplayInfoID") ?? -1,
+                    ItemAppearanceModifierId = modifierId,
+                    BonusIds = bonusIds
+                });
+            }
+
+            return new ItemToDisplayInfoMetadata()
+            {
+                ItemId = item.ID,
+                InventoryType = item.Field<int>("InventoryType"),
+                DisplayInfos = displayInfos
+            };
+        }
+
 
         public ItemMetadata? GetMetadataForDisplayId(int displayId)
         {
@@ -38,8 +77,8 @@ namespace ModelViewer.Core.Components
 
             try
             {
-            var item = _dbcdStorageProvider["Item"][itemModAppearance.Field<int>("ItemID")];
-            return GetMetadata(item, displayInfo);
+                var item = _dbcdStorageProvider["Item"][itemModAppearance.Field<int>("ItemID")];
+                return GetMetadata(item, displayInfo);
             }
             catch(KeyNotFoundException)
             {

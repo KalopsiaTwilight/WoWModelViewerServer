@@ -30,6 +30,7 @@ namespace Extractor
         const string characterMetadataPath = "modelviewer/metadata/character/";
         const string itemMetadataPath = "modelviewer/metadata/item/";
         const string itemVisualMetadataPath = "modelviewer/metadata/itemvisual/";
+        const string itemDisplayInfosMetadataPath = "modelviewer/metadata/itemdisplayinfos/";
         const string liquidTypePath = "modelviewer/metadata/liquidtype/";
         const string liquidObjectPath = "modelviewer/metadata/liquidobject/";
         const string bonePath = "modelviewer/bone/";
@@ -52,7 +53,7 @@ namespace Extractor
         {
             string[] paths = [
                 texturePath, characterMetadataPath, itemMetadataPath, itemVisualMetadataPath, bonePath, modelPath,
-                liquidTypePath, liquidObjectPath, textureVariationMetadataPath
+                liquidTypePath, liquidObjectPath, textureVariationMetadataPath, itemDisplayInfosMetadataPath
             ];
             foreach(var path in paths)
             {
@@ -61,6 +62,36 @@ namespace Extractor
                 {
                     Directory.CreateDirectory(fullPath);
                 }
+            }
+        }
+
+        public void ExtractItemDisplayInfosMetadata()
+        {
+            var itemComponent = new ItemMetadataComponent(_dbcdStorageProvider);
+            var availableIds = _dbcdStorageProvider["Item"].Keys;
+
+            messages.WriteLine("Extracting item display infos metadata...");
+            foreach (var id in availableIds)
+            {
+                messages.WriteLine($"Extracting metadata for Item {id}...");
+                var metadata = itemComponent.GetDisplayInfoMetadataForItem(id);
+                if (metadata == null)
+                {
+                    messages.WriteLine($"Unable to create metadata for Item {id}, skipping.");
+                    continue;
+                }
+
+                var outputPath = Path.Combine(_outputPath, itemDisplayInfosMetadataPath, $"{id}.json");
+                if (File.Exists(outputPath))
+                {
+                    messages.WriteLine($"Skipping metadata for Item {id}, already processed.");
+                    continue;
+                }
+
+                var json = JsonSerializer.Serialize(metadata, _jsonOptions);
+                File.WriteAllText(outputPath, json);
+
+                messages.WriteLine($"Item display infos for item {id} sucessfully written to output folder.");
             }
         }
 
@@ -154,7 +185,7 @@ namespace Extractor
                 var outputPath = Path.Combine(_outputPath, itemMetadataPath, $"{id}.json");
                 if (File.Exists(outputPath))
                 {
-                    messages.WriteLine($"Skipping character metadata for Item Display Info {id}, already processed.");
+                    messages.WriteLine($"Skipping metadata for Item Display Info {id}, already processed.");
                     continue;
                 }
 

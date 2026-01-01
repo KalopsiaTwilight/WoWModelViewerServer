@@ -71,7 +71,7 @@ namespace Server.Controllers
             {
                 if (!Directory.Exists(Path.GetDirectoryName(cachePath)))
                 {
-                    Directory.CreateDirectory(cachePath);
+                    Directory.CreateDirectory(Path.GetDirectoryName(cachePath)!);
                 }
 
                 var json = JsonSerializer.Serialize(metadata, _jsonOptions);
@@ -106,7 +106,7 @@ namespace Server.Controllers
             {
                 if (!Directory.Exists(Path.GetDirectoryName(cachePath)))
                 {
-                    Directory.CreateDirectory(cachePath);
+                    Directory.CreateDirectory(Path.GetDirectoryName(cachePath)!);
                 }
 
                 var json = JsonSerializer.Serialize(metadata, _jsonOptions);
@@ -140,7 +140,7 @@ namespace Server.Controllers
             {
                 if (!Directory.Exists(Path.GetDirectoryName(cachePath)))
                 {
-                    Directory.CreateDirectory(cachePath);
+                    Directory.CreateDirectory(Path.GetDirectoryName(cachePath)!);
                 }
 
                 var json = JsonSerializer.Serialize(metadata, _jsonOptions);
@@ -174,7 +174,7 @@ namespace Server.Controllers
             {
                 if (!Directory.Exists(Path.GetDirectoryName(cachePath)))
                 {
-                    Directory.CreateDirectory(cachePath);
+                    Directory.CreateDirectory(Path.GetDirectoryName(cachePath)!);
                 }
 
                 var json = JsonSerializer.Serialize(metadata, _jsonOptions);
@@ -209,7 +209,7 @@ namespace Server.Controllers
             {
                 if (!Directory.Exists(Path.GetDirectoryName(cachePath)))
                 {
-                    Directory.CreateDirectory(cachePath);
+                    Directory.CreateDirectory(Path.GetDirectoryName(cachePath)!);
                 }
 
                 var json = JsonSerializer.Serialize(metadata, _jsonOptions);
@@ -244,7 +244,42 @@ namespace Server.Controllers
             {
                 if (!Directory.Exists(Path.GetDirectoryName(cachePath)))
                 {
-                    Directory.CreateDirectory(cachePath);
+                    Directory.CreateDirectory(Path.GetDirectoryName(cachePath)!);
+                }
+
+                var json = JsonSerializer.Serialize(metadata, _jsonOptions);
+                System.IO.File.WriteAllText(cachePath, json);
+            }
+            return Ok(metadata);
+        }
+
+        [HttpGet]
+        [Route("/modelviewer/metadata/itemdisplayinfos/{itemId}.json")]
+        public ActionResult GetItemDisplayInfosMetadata(int itemId)
+        {
+            string cachePath = string.Empty;
+            if (!string.IsNullOrEmpty(_fileStoragePath))
+            {
+                cachePath = Path.Combine(_fileStoragePath, $"modelviewer/metadata/itemdisplayinfos/{itemId}.json");
+                if (System.IO.File.Exists(cachePath))
+                {
+                    var cachedResult = JsonSerializer.Deserialize<ItemToDisplayInfoMetadata>(System.IO.File.ReadAllText(cachePath), _jsonOptions);
+                    return Ok(cachedResult);
+                }
+            }
+
+            var metadata = _itemMetadataComponent.GetDisplayInfoMetadataForItem(itemId);
+            if (metadata == null)
+            {
+                return NotFound();
+            }
+
+
+            if (!string.IsNullOrEmpty(cachePath))
+            {
+                if (!Directory.Exists(Path.GetDirectoryName(cachePath)))
+                {
+                    Directory.CreateDirectory(Path.GetDirectoryName(cachePath)!);
                 }
 
                 var json = JsonSerializer.Serialize(metadata, _jsonOptions);
@@ -335,7 +370,7 @@ namespace Server.Controllers
             {
                 if (!Directory.Exists(Path.GetDirectoryName(cachePath)))
                 {
-                    Directory.CreateDirectory(cachePath);
+                    Directory.CreateDirectory(Path.GetDirectoryName(cachePath)!);
                 }
 
                 cm2Writer = new CM2Writer(System.IO.File.OpenWrite(cachePath));
@@ -401,7 +436,7 @@ namespace Server.Controllers
             {
                 if (!Directory.Exists(Path.GetDirectoryName(cachePath)))
                 {
-                    Directory.CreateDirectory(cachePath);
+                    Directory.CreateDirectory(Path.GetDirectoryName(cachePath)!);
                 }
 
                 cm2Writer = new CM2Writer(System.IO.File.OpenWrite(cachePath));
@@ -468,7 +503,7 @@ namespace Server.Controllers
             {
                 if (!Directory.Exists(Path.GetDirectoryName(cachePath)))
                 {
-                    Directory.CreateDirectory(cachePath);
+                    Directory.CreateDirectory(Path.GetDirectoryName(cachePath)!);
                 }
 
                 cwmoWriter = new CWMOWriter(System.IO.File.OpenWrite(cachePath));
