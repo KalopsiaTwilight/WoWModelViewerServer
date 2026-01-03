@@ -1,10 +1,10 @@
 ﻿using BLPSharp;
 using ModelViewer.Core.CM2;
 using ModelViewer.Core.Components;
+using ModelViewer.Core.Models;
 using ModelViewer.Core.Providers;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
-using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
 using WoWFileFormats.Interfaces;
 using WoWFileFormats.M2;
@@ -36,6 +36,7 @@ namespace Extractor
         const string bonePath = "modelviewer/bone/";
         const string modelPath = "modelviewer/models/";
         const string textureVariationMetadataPath = "modelviewer/metadata/texturevariations/";
+        const string spellVisualKitMetadataPath = "modelviewer/metadata/texturevariations/";
 
         public ExtractComponent(IFileDataProvider fileDataProvider, IDBCDStorageProvider dbcdStorageProvider, string outputPath, IMessageWriter outputWriter)
         {
@@ -53,7 +54,8 @@ namespace Extractor
         {
             string[] paths = [
                 texturePath, characterMetadataPath, itemMetadataPath, itemVisualMetadataPath, bonePath, modelPath,
-                liquidTypePath, liquidObjectPath, textureVariationMetadataPath, itemDisplayInfosMetadataPath
+                liquidTypePath, liquidObjectPath, textureVariationMetadataPath, itemDisplayInfosMetadataPath,
+                spellVisualKitMetadataPath
             ];
             foreach(var path in paths)
             {
@@ -225,6 +227,26 @@ namespace Extractor
                     }
                 }
 
+                if (metadata.StateSpellVisualKitId != 0)
+                {
+                    ExtractSpellVisualKit(metadata.StateSpellVisualKitId);
+                }
+
+                if (metadata.SheathedSpellVisualKitId != 0)
+                {
+                    ExtractSpellVisualKit(metadata.SheathedSpellVisualKitId);
+                }
+
+                if (metadata.UnsheathedSpellVisualKitId != 0)
+                {
+                    ExtractSpellVisualKit(metadata.UnsheathedSpellVisualKitId);
+                }
+
+                if (metadata.ItemVisual > 0)
+                {
+                    ExtractItemVisual(metadata.ItemVisual);
+                }
+
                 messages.WriteLine($"Item Display Info {id} metadata sucessfully written to output folder.");
             }
         }
@@ -261,6 +283,18 @@ namespace Extractor
                 }
 
                 messages.WriteLine($"Liquid type {id} sucessfully written to output folder.");
+            }
+        }
+
+        public void ExtractItemVisualMetadata()
+        {
+            var component = new ItemVisualComponent(_dbcdStorageProvider);
+            var availableIds = _dbcdStorageProvider["ItemVisual"].Keys;
+
+            messages.WriteLine("Extracting Item display metadata...");
+            foreach(var id in availableIds)
+            {
+                ExtractItemVisual(id);
             }
         }
 
@@ -444,6 +478,92 @@ namespace Extractor
             img.SaveAsWebp(outputPath);
 
             messages.WriteLine($"BLP file {fileId} succesfully writen to output folder.");
+        }
+
+        public void ExtractSpellVisualKit(int id)
+        {
+            var metadataComponent = new SpellVisualKitMetadataComponent(_dbcdStorageProvider);
+
+            messages.WriteLine($"Extracting spell visual kit {id}...");
+            var outputPath = Path.Combine(_outputPath, spellVisualKitMetadataPath, $"{id}.json");
+
+
+            if (File.Exists(outputPath))
+            {
+                messages.WriteLine($"Skipping spell visual kit {id}, already processed.");
+                return;
+            }
+
+            var metadata = metadataComponent.GetSpellVisualKitMetadata(id);
+
+            if (metadata == null)
+            {
+                messages.WriteLine($"No spell visual kit found with id {id} available.");
+                return;
+            }
+
+            var json = JsonSerializer.Serialize(metadata, _jsonOptions);
+            File.WriteAllText(outputPath, json);
+
+            foreach(var effect in metadata.Effects)
+            {
+                if (effect is ModelAttachVisualKitEffectData modelAttachEffect)
+                {
+                    var effectName = modelAttachEffect.SpellVisualEffectName;
+                    if (effectName != null)
+                    {
+                        if (effectName.ModelFileDataId > 0)
+                        {
+                            ExtractM2((uint) effectName.ModelFileDataId);
+                        }
+                        if (effectName.TextureFileDataId > 0)
+                        {
+                            ExtractTexture((uint)effectName.TextureFileDataId);
+                        }
+                    }
+                }
+            }
+
+            messages.WriteLine($"Spell visual kit {id} sucessfully written to output folder.");
+        }
+
+        public void ExtractItemVisual(int id)
+        {
+            var metadataComponent = new ItemVisualComponent(_dbcdStorageProvider);
+
+            messages.WriteLine($"Extracting spell visual kit {id}...");
+            var outputPath = Path.Combine(_outputPath, itemVisualMetadataPath, $"{id}.json");
+
+            if (File.Exists(outputPath))
+            {
+                messages.WriteLine($"Skipping spell visual kit {id}, already processed.");
+                return;
+            }
+
+            var metadata = metadataComponent.GetItemVisualMetadata(id);
+
+            if (metadata == null)
+            {
+                messages.WriteLine($"No spell visual kit found with id {id} available.");
+                return;
+            }
+
+            var json = JsonSerializer.Serialize(metadata, _jsonOptions);
+            File.WriteAllText(outputPath, json);
+
+            foreach (var effect in metadata.Effects)
+            {
+                if (effect.ModelFileDataId > 0)
+                {
+                    ExtractM2((uint)effect.ModelFileDataId);
+                }
+                if (effect.SpellVisualKitId > 0)
+                {
+                    ExtractSpellVisualKit(effect.SpellVisualKitId);
+                }
+            }
+
+            messages.WriteLine($"Spell visual kit {id} sucessfully written to output folder.");
         }
     }
 }

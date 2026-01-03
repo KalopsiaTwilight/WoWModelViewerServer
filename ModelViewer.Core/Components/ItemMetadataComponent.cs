@@ -117,7 +117,10 @@ namespace ModelViewer.Core.Components
                 SubclassId = item.Field<int>("SubclassID"),
                 GeosetGroup = displayInfo.Field<int[]>("GeosetGroup"),
                 AttachmentGeosetGroup = displayInfo.Field<int[]>("AttachmentGeosetGroup"),
-                ItemVisual = displayInfo.Field<int>("ItemVisual")
+                ItemVisual = displayInfo.Field<int>("ItemVisual"),
+                StateSpellVisualKitId = displayInfo.Field<int>("StateSpellVisualKitID"),
+                SheathedSpellVisualKitId = displayInfo.Field<int>("SheathedSpellVisualKitID"),
+                UnsheathedSpellVisualKitId = displayInfo.Field<int>("UnsheathedSpellVisualKitID"),
             };
 
             var textureSections = _dbcdStorageProvider["ItemDisplayInfoMaterialRes"]
@@ -206,6 +209,12 @@ namespace ModelViewer.Core.Components
                     }).ToList();
             }
 
+            var matrixId = displayInfo.Field<int>("SheatheTransformMatrixID");
+            if (matrixId > 0)
+            {
+                modelData.SheatheTransformMatrix = GetMatrixData(matrixId, item.ID);
+            }
+
             return modelData;
         }
         private List<TextureFileData> GetTextureFiles(int modelResourceId)
@@ -247,6 +256,25 @@ namespace ModelViewer.Core.Components
                 });
             }
             return result;
+        }
+
+
+        public TransformMatrixData GetMatrixData(int matrixId, int itemId)
+        {
+            _dbcdStorageProvider["TransformMatrix"].TryGetValue(matrixId, out var matrixEntry);
+            if (matrixEntry == null)
+            {
+                throw new Exception($"Unable to find transform matrix {matrixId} listed for item id {itemId}");
+            }
+
+            return new()
+            {
+                Pos = matrixEntry.Field<float[]>("Pos"),
+                Yaw = matrixEntry.Field<float>("Yaw"),
+                Pitch = matrixEntry.Field<float>("Pitch"),
+                Roll = matrixEntry.Field<float>("Roll"),
+                Scale = matrixEntry.Field<float>("Scale"),
+            };
         }
     }
 }

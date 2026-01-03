@@ -2,7 +2,7 @@
 {
     public class ItemVisualMetadata
     {
-        public List<ItemVisualEffectsData>? Effects { get; set; }
+        public List<ItemVisualEffectsData> Effects { get; set; } = [];
     }
 
     public class ItemVisualEffectsData
@@ -10,8 +10,7 @@
         public int AttachmentId { get; set; }
         public int SubClassId { get; set; }
         public int ModelFileDataId { get; set; }
-        public SpellVisualKitData? SpellVisualKit { get; set; }
+        public int SpellVisualKitId { get; set; }
         public float Scale { get; set; }
     }
-
 }

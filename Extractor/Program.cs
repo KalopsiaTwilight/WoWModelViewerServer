@@ -64,5 +64,6 @@ foreach (var todo in toExtract)
 
 extractComponent.ExtractLiquidTypes();
 extractComponent.ExtractCharacterModelMetadata();
+extractComponent.ExtractItemVisualMetadata();
 extractComponent.ExtractItemMetadata();
 extractComponent.ExtractItemDisplayInfosMetadata();

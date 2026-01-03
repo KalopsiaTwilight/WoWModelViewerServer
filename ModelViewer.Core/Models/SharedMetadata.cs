@@ -17,4 +17,13 @@
         public int RaceId { get; set; }
         public int PositionIndex { get; set; }
     }
+
+    public class TransformMatrixData
+    {
+        public float[] Pos { get; set; } = [];
+        public float Yaw { get; set; }
+        public float Pitch { get; set; }
+        public float Roll { get; set; }
+        public float Scale { get; set; }
+    }
 }

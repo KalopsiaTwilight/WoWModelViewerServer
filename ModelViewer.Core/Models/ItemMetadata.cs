@@ -22,8 +22,11 @@
         public int SubclassId { get; set; }
         public int[] GeosetGroup { get; set; } = [];
         public int[] AttachmentGeosetGroup { get; set; } = [];
-        public int GeosetGroupOverride { get; set; }
         public int ItemVisual { get; set; }
+        public int StateSpellVisualKitId { get; set; }
+        public int SheathedSpellVisualKitId { get; set; }
+        public int UnsheathedSpellVisualKitId { get; set; }
+        public TransformMatrixData? SheatheTransformMatrix { get; set; }
         public List<ComponentSectionData> ComponentSections { get; set; } = [];
         public ItemParticleColorOverrideData? ParticleColor { get; set; }
         public List<ItemHideGeosetData>? HideGeoset1 { get; set; }

@@ -1,5 +1,4 @@
 ﻿using BLPSharp;
-using Microsoft.AspNetCore.Http.Json;
 using Microsoft.AspNetCore.Mvc;
 using ModelViewer.Core.CM2;
 using ModelViewer.Core.Components;
@@ -23,13 +22,15 @@ namespace Server.Controllers
         private readonly ItemVisualComponent _itemVisualComponent;
         private readonly LiquidMetadataComponent _liquidMetadataComponent;
         private readonly TextureVariationsMetadataComponent _textureVariationsMetadataComponent;
+        private readonly SpellVisualKitMetadataComponent _spellVisualKitMetadataComponent;
         private readonly JsonSerializerOptions _jsonOptions;
         private string? _fileStoragePath;
 
         public ModelViewerController(
             IFileDataProvider fileDataProvider, ItemMetadataComponent itemMetadataComponent, CharacterMetadataComponent charMetadataComponent,
-            ItemVisualComponent itemVisualComponent, LiquidMetadataComponent liquidMetadataComponent,
-            TextureVariationsMetadataComponent textureVariationsMetadataComponent, IConfiguration config
+            ItemVisualComponent itemVisualComponent, LiquidMetadataComponent liquidMetadataComponent, 
+            TextureVariationsMetadataComponent textureVariationsMetadataComponent, SpellVisualKitMetadataComponent spellVisualKitMetadataComponent, 
+            IConfiguration config
         )
         {
             _fileDataProvider = fileDataProvider;
@@ -38,11 +39,13 @@ namespace Server.Controllers
             _itemVisualComponent = itemVisualComponent;
             _liquidMetadataComponent = liquidMetadataComponent;
             _textureVariationsMetadataComponent = textureVariationsMetadataComponent;
+            _spellVisualKitMetadataComponent = spellVisualKitMetadataComponent;
 
             _fileStoragePath = config["OutputPath"];
             _jsonOptions = new JsonSerializerOptions()
             {
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                
             };
         }
 
@@ -269,6 +272,41 @@ namespace Server.Controllers
             }
 
             var metadata = _itemMetadataComponent.GetDisplayInfoMetadataForItem(itemId);
+            if (metadata == null)
+            {
+                return NotFound();
+            }
+
+
+            if (!string.IsNullOrEmpty(cachePath))
+            {
+                if (!Directory.Exists(Path.GetDirectoryName(cachePath)))
+                {
+                    Directory.CreateDirectory(Path.GetDirectoryName(cachePath)!);
+                }
+
+                var json = JsonSerializer.Serialize(metadata, _jsonOptions);
+                System.IO.File.WriteAllText(cachePath, json);
+            }
+            return Ok(metadata);
+        }
+
+        [HttpGet]
+        [Route("/modelviewer/metadata/spellvisualkit/{spellvisualKitId}.json")]
+        public ActionResult GetSpellVisualKitMetadata(int spellvisualKitId)
+        {
+            string cachePath = string.Empty;
+            if (!string.IsNullOrEmpty(_fileStoragePath))
+            {
+                cachePath = Path.Combine(_fileStoragePath, $"modelviewer/metadata/spellvisualkit/{spellvisualKitId}.json");
+                if (System.IO.File.Exists(cachePath))
+                {
+                    var cachedResult = JsonSerializer.Deserialize<SpellVisualKitMetadata>(System.IO.File.ReadAllText(cachePath), _jsonOptions);
+                    return Ok(cachedResult);
+                }
+            }
+
+            var metadata = _spellVisualKitMetadataComponent.GetSpellVisualKitMetadata(spellvisualKitId);
             if (metadata == null)
             {
                 return NotFound();
