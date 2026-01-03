@@ -36,7 +36,7 @@ namespace Extractor
         const string bonePath = "modelviewer/bone/";
         const string modelPath = "modelviewer/models/";
         const string textureVariationMetadataPath = "modelviewer/metadata/texturevariations/";
-        const string spellVisualKitMetadataPath = "modelviewer/metadata/texturevariations/";
+        const string spellVisualKitMetadataPath = "modelviewer/metadata/spellvisualkit/";
 
         public ExtractComponent(IFileDataProvider fileDataProvider, IDBCDStorageProvider dbcdStorageProvider, string outputPath, IMessageWriter outputWriter)
         {
@@ -289,9 +289,9 @@ namespace Extractor
         public void ExtractItemVisualMetadata()
         {
             var component = new ItemVisualComponent(_dbcdStorageProvider);
-            var availableIds = _dbcdStorageProvider["ItemVisual"].Keys;
+            var availableIds = _dbcdStorageProvider["ItemVisuals"].Keys;
 
-            messages.WriteLine("Extracting Item display metadata...");
+            messages.WriteLine("Extracting item visuals metadata...");
             foreach(var id in availableIds)
             {
                 ExtractItemVisual(id);
@@ -531,12 +531,12 @@ namespace Extractor
         {
             var metadataComponent = new ItemVisualComponent(_dbcdStorageProvider);
 
-            messages.WriteLine($"Extracting spell visual kit {id}...");
+            messages.WriteLine($"Extracting item visual {id}...");
             var outputPath = Path.Combine(_outputPath, itemVisualMetadataPath, $"{id}.json");
 
             if (File.Exists(outputPath))
             {
-                messages.WriteLine($"Skipping spell visual kit {id}, already processed.");
+                messages.WriteLine($"Skipping item visual {id}, already processed.");
                 return;
             }
 
@@ -544,7 +544,7 @@ namespace Extractor
 
             if (metadata == null)
             {
-                messages.WriteLine($"No spell visual kit found with id {id} available.");
+                messages.WriteLine($"No item visual found with id {id} available.");
                 return;
             }
 
