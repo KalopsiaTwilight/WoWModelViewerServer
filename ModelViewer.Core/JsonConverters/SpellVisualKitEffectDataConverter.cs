@@ -20,6 +20,7 @@ namespace ModelViewer.Core.JsonConverters
                         switch (type)
                         {
                             case SpellVisualKitEffectType.ModelAttach: return JsonSerializer.Deserialize<ModelAttachVisualKitEffectData>(doc, options);
+                            case SpellVisualKitEffectType.Beam: return JsonSerializer.Deserialize<BeamVisualKitEffectData>(doc, options);
                             default: throw new Exception($"Unknown {nameof(SpellVisualKitEffectType)} encountered while parsing {nameof(SpellVisualKitEffectData)}");   
                         }
                     }
@@ -34,7 +35,15 @@ namespace ModelViewer.Core.JsonConverters
             if (value is ModelAttachVisualKitEffectData modelAttachEffect)
             {
                 writer.WriteRawValue(JsonSerializer.Serialize(modelAttachEffect, options));
+                return;
             }
+            if (value is BeamVisualKitEffectData beamEffect)
+            {
+                writer.WriteRawValue(JsonSerializer.Serialize(beamEffect, options));
+                return;
+            }
+
+            throw new Exception("Encountered unknown spell visual kit effect data type"); 
         }
     }
 }

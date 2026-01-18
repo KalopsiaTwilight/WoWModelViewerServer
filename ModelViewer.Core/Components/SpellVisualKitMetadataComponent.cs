@@ -42,6 +42,7 @@ namespace ModelViewer.Core.Components
             switch ((SpellVisualKitEffectType) type)
             {
                 case SpellVisualKitEffectType.ModelAttach: return GetSpellVisualKitModelAttachEffect(id);
+                case SpellVisualKitEffectType.Beam: return GetSpellVisualKitBeamEffect(id);
                 default: return null;
             }
         }
@@ -102,6 +103,128 @@ namespace ModelViewer.Core.Components
                 result.Positioner = GetPositionerData(positionerId);
             }
 
+            return result;
+        }
+
+        private BeamVisualKitEffectData GetSpellVisualKitBeamEffect(int id)
+        {
+            var effectData = _dbcdStorageProvider["BeamEffect"][id];
+
+            var result = new BeamVisualKitEffectData()
+            {
+                Type = SpellVisualKitEffectType.Beam,
+                SourceMinDistance = effectData.Field<float>("SourceMinDistance"),
+                FixedLength = effectData.Field<int>("FixedLength"),
+                Flags = effectData.Field<int>("Flags"),
+                SourceOffset = effectData.Field<int>("SourceOffset"),
+                DestOffset = effectData.Field<int>("DestOffset"),
+                DestAttachId = effectData.Field<int>("DestAttachID"),
+                SourceAttachId = effectData.Field<int>("SourceAttachID"),
+            };
+
+            var srcPositionerId = effectData.Field<int>("SourcePositionerID");
+            if (srcPositionerId > 0)
+            {
+                result.SourcePositioner = GetPositionerData(srcPositionerId);
+            }
+            var destPositionerId = effectData.Field<int>("DestPositionerID");
+            if (destPositionerId > 0)
+            {
+                result.DestPositioner = GetPositionerData(destPositionerId);
+            }
+
+            var beamId = effectData.Field<ushort>("BeamID");
+            result.Beam = GetSpellChainEffectData(beamId);
+            return result;
+        }
+
+        public SpellChainEffectData GetSpellChainEffectData(ushort id)
+        {
+            _dbcdStorageProvider["SpellChainEffects"].TryGetValue(id, out var effect);
+            if (effect == null)
+            {
+                throw new Exception("Unable to find spell chain effect with id: " + id);
+            }
+
+            var result = new SpellChainEffectData
+            {
+                Id = id,
+                AvgSegLength = effect.Field<float>("AvgSegLen"),
+                NoiseScale = effect.Field<float>("NoiseScale"),
+                TexCoordScale = effect.Field<float>("TexCoordScale"),
+                SegDuration = effect.Field<int>("SegDuration"),
+                SegDelay = effect.Field<int>("SegDelay"),
+                Flags = effect.Field<int>("Flags"),
+                JointCount = effect.Field<int>("JointCount"),
+                JointOffsetRadius = effect.Field<float>("JointOffsetRadius"),
+                JointsPerMinorJoint = effect.Field<int>("JointsPerMinorJoint"),
+                MinorJointsPerMajorJoint = effect.Field<int>("MinorJointsPerMajorJoint"),
+                MinorJointScale = effect.Field<float>("MinorJointScale"),
+                MajorJointScale = effect.Field<float>("MajorJointScale"),
+                JointMoveSpeed = effect.Field<float>("JointMoveSpeed"),
+                JointSmoothness = effect.Field<float>("JointSmoothness"),
+                MinDurationBetweenJointsJumps = effect.Field<float>("MinDurationBetweenJointJumps"),
+                MaxDurationBetweenJointsJumps = effect.Field<float>("MaxDurationBetweenJointJumps"),
+                WaveHeight = effect.Field<float>("WaveHeight"),
+                WaveFreq = effect.Field<float>("WaveFreq"),
+                WaveSpeed = effect.Field<float>("WaveSpeed"),
+                MinWaveAngle = effect.Field<float>("MinWaveAngle"),
+                MaxWaveAngle = effect.Field<float>("MaxWaveAngle"),
+                MinWaveSpin = effect.Field<float>("MinWaveSpin"),
+                MaxWaveSpin = effect.Field<float>("MaxWaveSpin"),
+                ArcHeight = effect.Field<float>("ArcHeight"),
+                MinArcAngle = effect.Field<float>("MinArcAngle"),
+                MaxArcAngle = effect.Field<float>("MaxArcAngle"),
+                MinArcSpin = effect.Field<float>("MinArcSpin"),
+                MaxArcSpin = effect.Field<float>("MaxArcSpin"),
+                DelayBetweenEffects = effect.Field<float>("DelayBetweenEffects"),
+                MinFlickerOnDuration = effect.Field<float>("MinFlickerOnDuration"),
+                MaxFlickerOnDuration = effect.Field<float>("MaxFlickerOnDuration"),
+                MinFlickerOffDuration = effect.Field<float>("MinFlickerOffDuration"),
+                MaxFlickerOffDuration = effect.Field<float>("MaxFlickerOffDuration"),
+                PulseSpeed = effect.Field<int>("PulseSpeed"),
+                PulseOnLength = effect.Field<int>("PulseOnLength"),
+                PulseFadeLength = effect.Field<int>("PulseFadeLength"),
+                Alpha = effect.Field<byte>("Alpha"),
+                Red = effect.Field<byte>("Red"),
+                Green = effect.Field<byte>("Green"),
+                Blue = effect.Field<byte>("Blue"),
+                BlendMode = effect.Field<int>("BlendMode"),
+                RenderLayer = effect.Field<int>("RenderLayer"),
+                WavePhase = effect.Field<float>("WavePhase"),
+                TimePerFlipFrame = effect.Field<float>("TimePerFlipFrame"),
+                VariancePerFlipFrame = effect.Field<float>("VariancePerFlipFrame"),
+                TextureParticleFileDataId = effect.Field<int>("TextureParticleFileDataID"),
+                StartWidth = effect.Field<float>("StartWidth"),
+                EndWidth = effect.Field<float>("EndWidth"),
+                NumFlipFramesU = effect.Field<int>("NumFlipFramesU"),
+                NumFlipFramesV = effect.Field<int>("NumFlipFramesV"),
+                ParticleScaleMultiplier = effect.Field<float>("ParticleScaleMultiplier"),
+                ParticleEmissionRateMultiplier = effect.Field<float>("ParticleEmissionRateMultiplier"),
+                TextureCoordScaleU = effect.Field<float[]>("TextureCoordScaleU"),
+                TextureCoordScaleV = effect.Field<float[]>("TextureCoordScaleV"),
+                TextureRepeatLengthU = effect.Field<float[]>("TextureRepeatLengthU"),
+                TextureRepeatLengthV = effect.Field<float[]>("TextureRepeatLengthV"),
+                TextureFileDataIds = effect.Field<int[]>("TextureFileDataID"),
+                SpellChainEffects = [.. effect.Field<ushort[]>("SpellChainEffectID").Where(x => x > 0).Select(GetSpellChainEffectData)]
+            };
+
+            var curveId = effect.Field<int>("WidthScaleCurveID");
+            if (curveId > 0)
+            {
+                _dbcdStorageProvider["Curve"].TryGetValue(curveId, out var curve);
+                if (curve == null)
+                {
+                    throw new Exception("Unable to find curve with id: " + id);
+                }
+
+                result.WidthScaleCurve = new CurveData()
+                {
+                    Id = curveId,
+                    Flags = curve.Field<int>("Flags"),
+                    Type = curve.Field<int>("Type"),
+                };
+            }
             return result;
         }
 

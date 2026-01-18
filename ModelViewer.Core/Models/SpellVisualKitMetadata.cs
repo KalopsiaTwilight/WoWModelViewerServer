@@ -62,6 +62,99 @@ namespace ModelViewer.Core.Models
         public PositionerData? Positioner { get; set; }
     }
 
+    public class BeamVisualKitEffectData : SpellVisualKitEffectData
+    {
+        public float SourceMinDistance { get; set; }
+        public int FixedLength { get; set; }
+        public int Flags { get; set; }
+        public int SourceOffset { get; set; }
+        public int DestOffset { get; set; }
+        public int SourceAttachId { get; set; }
+        public int DestAttachId { get; set; }
+        public PositionerData? SourcePositioner { get; set; } 
+        public PositionerData? DestPositioner { get; set;  }
+        public SpellChainEffectData? Beam { get; set; }
+    }
+
+    public class SpellChainEffectData
+    {
+        public int Id { get; set; }
+        public float AvgSegLength { get; set;  }
+        public float NoiseScale { get; set; }
+        public float TexCoordScale { get; set; } 
+        public int SegDuration { get; set;  }
+        public int SegDelay { get; set; }
+        public int Flags { get; set; }
+        public int JointCount { get; set; }
+        public float JointOffsetRadius { get; set;  }
+        public int JointsPerMinorJoint { get; set; }
+        public int MinorJointsPerMajorJoint { get; set; }
+        public float MinorJointScale { get; set; }
+        public float MajorJointScale { get; set; }
+        public float JointMoveSpeed { get; set; }
+        public float JointSmoothness { get; set; }
+        public float MinDurationBetweenJointsJumps { get; set; }
+        public float MaxDurationBetweenJointsJumps { get; set; }
+        public float WaveHeight { get; set; }
+        public float WaveFreq { get; set; }
+        public float WaveSpeed { get; set; }
+        public float MinWaveAngle { get; set; }
+        public float MaxWaveAngle { get; set; }
+        public float MinWaveSpin { get; set; }
+        public float MaxWaveSpin { get; set; }
+        public float ArcHeight { get; set; }
+        public float MinArcAngle { get; set; }
+        public float MaxArcAngle { get; set; }
+        public float MinArcSpin { get; set; }
+        public float MaxArcSpin { get; set; }
+        public float DelayBetweenEffects { get; set; }
+        public float MinFlickerOnDuration { get; set; }
+        public float MaxFlickerOnDuration { get; set; }
+        public float MinFlickerOffDuration { get; set; }
+        public float MaxFlickerOffDuration { get; set; }
+        public int PulseSpeed { get; set; }
+        public float PulseOnLength { get; set; }
+        public float PulseFadeLength { get; set; }
+        public byte Alpha { get; set; }
+        public byte Red { get; set; }
+        public byte Green { get; set; }
+        public byte Blue { get; set; }
+        public int BlendMode { get; set; }
+        public int RenderLayer { get; set; }
+        public float WavePhase { get; set; }
+        public float TimePerFlipFrame { get; set; }
+        public float VariancePerFlipFrame { get; set; }
+        public int TextureParticleFileDataId { get; set; }
+        public float StartWidth { get; set; }
+        public float EndWidth { get; set;  }
+        public int NumFlipFramesU { get; set; }
+        public int NumFlipFramesV { get; set; }
+        public float ParticleScaleMultiplier { get; set; }
+        public float ParticleEmissionRateMultiplier { get; set; }
+        public float[] TextureCoordScaleU { get; set; } = [];
+        public float[] TextureCoordScaleV { get; set; } = [];
+        public float[] TextureRepeatLengthU { get; set; } = [];
+        public float[] TextureRepeatLengthV { get; set; } = [];
+        public int[] TextureFileDataIds { get; set; } = [];
+        public CurveData? WidthScaleCurve { get; set; }
+        public List<SpellChainEffectData> SpellChainEffects { get; set; } = [];
+    }
+
+    public class CurveData
+    {
+        public int Id { get; set; }
+        public int Type { get; set; }
+        public int Flags { get; set; }
+    }
+
+    public enum CurveType
+    {
+        Linear = 0,
+        Cubic = 1,
+        Bezier = 2,
+        Cosine = 3,
+    }
+
     public enum SpellVisualEffectNameType
     {
         FileDataID = 0,
